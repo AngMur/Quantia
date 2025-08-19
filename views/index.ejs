@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinanceHub - Análisis Financiero</title>
+
+    <!-- Chart component -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+         
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            margin: 0 30px;
+            position: relative;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border: none;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .search-box::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            border: 1px solid #636e72;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1001;
+            display: none;
+        }
+
+        .search-result-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #636e72;
+            transition: background 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .search-result-item:hover {
+            background: #636e72;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item .stock-symbol {
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        .search-result-item .stock-name {
+            font-size: 12px;
+            color: #b2bec3;
+            margin-top: 2px;
+        }
+
+         .search-result-item .stock-type {
+            text-align: right;
+        }
+
+        .search-result-item .stock-exchange {
+            background-color: #00d4ff;
+            color: #1a1a2e;
+            display: inline;
+            float: right;
+            padding: 3px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .login-btn {
+            padding: 10px 25px;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+        }
+
+        .market-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .market-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .market-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .market-card h3 {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .market-price {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .market-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .positive {
+            color: #00ff88;
+        }
+
+        .negative {
+            color: #ff4757;
+        }
+
+        .trending-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .trending-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .trending-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .trending-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .asset-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .asset-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .asset-symbol {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 12px;
+        }
+
+        /* .mini-chart {
+            height: 60px;
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%);
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mini-chart::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 10px;
+            right: 10px;
+            height: 2px;
+            background: linear-gradient(90deg, #00d4ff, #4a90e2);
+            border-radius: 1px;
+        } */
+
+        .news-section {
+            margin-bottom: 40px;
+        }
+
+        .news-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .news-filters {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .news-select {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            min-width: 100px;
+        }
+
+        .news-select:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .news-select:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .news-select option {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 8px;
+        }
+
+        .news-refresh-btn {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .news-refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .news-status {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .news-thumbnail {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            background: linear-gradient(45deg, rgba(0, 212, 255, 0.1), rgba(74, 144, 226, 0.1));
+        }
+
+        .news-content {
+            padding: 20px;
+        }
+
+  
+        .news-title {
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 12px;
+            color: #fff;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .news-publisher {
+            color: #00d4ff;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .news-date {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 12px;
+        }
+
+        .news-category {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 212, 255, 0.8);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .news-loading {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .news-error {
+            text-align: center;
+            padding: 40px;
+            color: #ff4757;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 71, 87, 0.2);
+        }
+
+        .categories {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .category-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .category-btn:hover,
+        .category-btn.active {
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            color: white;
+            border-color: transparent;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, rgba(0, 212, 255, 0.1), rgba(74, 144, 226, 0.1));
+            animation: float 20s infinite linear;
+        }
+
+        .circle1 {
+            width: 100px;
+            height: 100px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .circle2 {
+            width: 150px;
+            height: 150px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -10s;
+        }
+
+        .circle3 {
+            width: 80px;
+            height: 80px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+            100% {
+                transform: translateY(0px) rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .search-container {
+                max-width: 100%;
+                margin: 0;
+            }
+
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .market-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .news-filters {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 5px;
+            }
+
+            .news-select {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+
+    <link rel="stylesheet" href="/styles/chart.css">
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-circle circle1"></div>
+        <div class="floating-circle circle2"></div>
+        <div class="floating-circle circle3"></div>
+    </div>
+
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo"><a href="/">Quantia</a></div>
+            
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Buscar activos..." id="searchInput">
+                <div class="search-icon">🔍</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+            
+            <a class="login-btn" href="/balance">Cuenta</a>
+            <a class="login-btn" href="/port-selector">Portafolio</a>
+            <a class="login-btn" href="/login">Iniciar Sesión</a>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <section class="hero-section">
+            <h1 class="hero-title">Análisis Financiero Inteligente</h1>
+            <p class="hero-subtitle">Explora mercados, analiza tendencias y toma decisiones informadas</p>
+        </section>
+
+        <div class="categories">
+            <button class="category-btn active" onclick="filterAssets('all')">Todos</button>
+            <button class="category-btn" onclick="filterAssets('stocks')">Acciones</button>
+            <button class="category-btn" onclick="filterAssets('crypto')">Criptomonedas</button>
+            <button class="category-btn" onclick="filterAssets('etf')">ETFs</button>
+            <button class="category-btn" onclick="filterAssets('forex')">Divisas</button>
+        </div>
+
+        <section class="market-overview">
+            <div class="market-card" onclick="openAsset('AAPL')">
+                <h3>Apple Inc.</h3>
+                <div class="market-price">$175.23</div>
+                <div class="market-change positive">+2.45 (+1.42%)</div>
+            </div>
+            
+            <div class="market-card" onclick="openAsset('GOOGL')">
+                <h3>Alphabet Inc.</h3>
+                <div class="market-price">$2,847.91</div>
+                <div class="market-change negative">-15.67 (-0.55%)</div>
+            </div>
+            
+            <div class="market-card" onclick="openAsset('BTC')">
+                <h3>Bitcoin</h3>
+                <div class="market-price">$43,256.78</div>
+                <div class="market-change positive">+1,234.56 (+2.94%)</div>
+            </div>
+            
+            <div class="market-card" onclick="openAsset('SPY')">
+                <h3>SPDR S&P 500 ETF</h3>
+                <div class="market-price">$478.92</div>
+                <div class="market-change positive">+3.21 (+0.67%)</div>
+            </div>
+        </section>
+
+        <section class="trending-section">
+            <h2 class="section-title">Tendencias del Mercado</h2>
+            <div class="trending-grid" id="trending-grid">
+                <div class="minichart-container">
+                    <!-- IBM -->
+                    <div class="minichart-header" >
+                        <div class="stock-info">
+                            <span class="stock-symbol" id="stockSymbol">IBM</span>
+                            <span class="stock-interval" id="stockInterval">5m</span>
+                        </div>
+                        <div class="price-info">
+                            <div class="stock-price" id="currentPrice">-</div>
+                            <div class="stock-change" id="priceChange">-</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" id="chartContainer">
+                        <div class="loading">Cargando datos iniciales...</div>
+                    </div>
+                    <div class="minichart-footer">
+                        Última actualización: <span id="lastUpdate">-</span>
+                        <div class="refresh-info">Próxima actualización en <span id="countdown">60</span> segundos</div>
+                    </div>
+
+                </div>
+                <!-- <div class="trending-card">
+                    <div class="asset-info">
+                        <div>
+                            <div class="asset-name">Tesla Inc.</div>
+                            <div class="asset-symbol">TSLA</div>
+                        </div>
+                        <div class="market-change positive">+4.23%</div>
+                    </div>
+                    <div class="mini-chart"></div>
+                </div>
+                
+                <div class="trending-card">
+                    <div class="asset-info">
+                        <div>
+                            <div class="asset-name">Ethereum</div>
+                            <div class="asset-symbol">ETH-USD</div>
+                        </div>
+                        <div class="market-change positive">+6.78%</div>
+                    </div>
+                    <div class="mini-chart"></div>
+                </div>
+                
+                <div class="trending-card">
+                    <div class="asset-info">
+                        <div>
+                            <div class="asset-name">Microsoft Corp.</div>
+                            <div class="asset-symbol">MSFT</div>
+                        </div>
+                        <div class="market-change negative">-1.23%</div>
+                    </div>
+                    <div class="mini-chart"></div>
+                </div> -->
+                
+                <!-- <div class="trending-card">
+                    <div class="asset-info">
+                        <div>
+                            <div class="asset-name">NVIDIA Corp.</div>
+                            <div class="asset-symbol">NVDA</div>
+                        </div>
+                        <div class="market-change positive">+8.91%</div>
+                    </div>
+                    <div class="mini-chart"></div>
+                </div> -->
+            </div>
+        </section>
+
+        <section class="news-section">
+            <h2 class="section-title">Noticias Financieras</h2>
+            <div class="news-controls">
+                <div class="news-filters">
+                    <div class="filter-group">
+                        <label for="categorySelect">📂 Categoría:</label>
+                        <select id="categorySelect" class="news-select" onchange="handleFilterChange()">
+                            <option value="general">General</option>
+                            <option value="markets">Mercados</option>
+                            <option value="economy">Economía</option>
+                            <option value="business">Negocios</option>
+                            <option value="crypto">Criptomonedas</option>
+                            <option value="stocks">Acciones</option>
+                            <option value="forex">Divisas</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="countSelect">🔢 Cantidad:</label>
+                        <select id="countSelect" class="news-select" onchange="handleFilterChange()">
+                            <option value="5">5 noticias</option>
+                            <option value="10" selected>10 noticias</option>
+                            <option value="15">15 noticias</option>
+                            <option value="20">20 noticias</option>
+                            <option value="25">25 noticias</option>
+                        </select>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <label for="regionSelect">🌍 Región:</label>
+                        <select id="regionSelect" class="news-select" onchange="handleFilterChange()">
+                            <option value="USA" selected>Estados Unidos</option>
+                            <option value="EUROPE">Europa</option>
+                            <option value="ASIA">Asia</option>
+                            <option value="LATAM">Latinoamérica</option>
+                            <option value="GLOBAL">Global</option>
+                        </select>
+                    </div>
+                    
+                    <button class="news-refresh-btn" onclick="refreshNews()">🔄 Actualizar</button>
+                </div>
+                
+                <div class="news-status" id="newsStatus">Cargando noticias...</div>
+            </div>
+            <div class="news-grid" id="newsContainer">
+                <!-- Las noticias se cargarán aquí dinámicamente -->
+            </div>
+        </section>
+    </main>
+    <script src="/scripts/minichart.js"></script>
+    <script>
+        // Funcionalidad de búsqueda
+        let searchTimeout;
+
+        setupEventListeners()
+
+        // Añadir eventos al los elementos
+        function setupEventListeners() {
+            // Buscador
+            const searchInput = document.getElementById('searchInput');
+            //Resultados
+            const searchResults = document.getElementById('searchResults');
+            
+            searchInput.addEventListener('input', handleSearch);
+            searchInput.addEventListener('focus', () => {
+            if (searchInput.value.trim()) handleSearch();
+            });
+            
+            // Cerrar resultados al hacer click fuera
+            document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-container')) {
+                searchResults.style.display = 'none';
+            }
+            });
+        }
+
+        async function handleSearch() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchResults = document.getElementById('searchResults');
+            
+            if (query.length === 0) {
+                searchResults.style.display = 'none';
+                return;
+            }
+
+            try {
+                const stocks = await getStockSymbols(query);
+                
+                if (stocks.length > 0) {
+                    let html = '';
+                    stocks.forEach(stock => {
+                        html += `
+                        <div class="search-result-item" onclick="selectResult('${stock.symbol}')">
+                        <div>
+                            <div class="stock-symbol">${stock.symbol}</div>
+                            <div class="stock-name">${stock.name}</div>
+                        </div>
+                        <div>
+                            <div class="stock-type">${stock.type}</div>
+                            <div class="stock-exchange">${stock.exchange}</div>
+                        </div>
+                        </div>
+                        `;
+                    });
+                    searchResults.innerHTML = html;
+                    searchResults.style.display = 'block';
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">No se encontraron resultados</div>';
+                    searchResults.style.display = 'block';
+                }
+            } catch (error) {
+                searchResults.innerHTML = `<div class="search-result-item">Error: ${error.message}</div>`;
+                searchResults.style.display = 'block';
+            }
+        }
+
+        async function getStockSymbols(searchTerm = '') {
+            // Verificar si el término de búsqueda está vacío
+            if (!searchTerm.trim()) {
+                return [];
+            }
+            
+            const url = `http://localhost:3000/api/search/${searchTerm}`;
+            
+            try {
+                const response = await fetch(url);
+                console.log(response);
+                
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'error') {
+                    throw new Error(data.message);
+                }
+
+                console.log(data);
+
+                return data.results 
+            } catch (error) {
+                console.error("Error al obtener datos:", error);
+                throw error; // Re-lanzar el error para manejarlo en el llamador
+            }
+        }
+
+        async function selectResult(symbol) {
+            // Redirige a indice4.html con el símbolo en el query param
+            window.location.href = `indice4.html?symbol=${encodeURIComponent(symbol)}`;
+        }
+
+        // Funcionalidad de noticias
+        async function loadNews(count = 10, category = 'general', region = 'USA', symbol = '') {
+            const newsContainer = document.getElementById('newsContainer');
+            const newsStatus = document.getElementById('newsStatus');
+            
+            try {
+                newsStatus.textContent = 'Cargando noticias...';
+                newsContainer.innerHTML = '<div class="news-loading">⏳ Cargando noticias financieras...</div>';
+                
+
+                let url;
+                if(symbol === ''){
+                    url = new URL('http://localhost:3000/api/news');
+                    url.searchParams.append('count', count);
+                    url.searchParams.append('category', category);
+                    url.searchParams.append('region', region);
+                }else{
+                    url = new URL(`http://localhost:3000/api/news/${symbol}`)
+                }
+                
+                
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                await new Promise(resolve => setTimeout(resolve, 800)); // Simular delay de red
+                
+                displayNews(data.news);
+                newsStatus.textContent = `${data.count} noticias cargadas • ${data.region}`;
+                
+            } catch (error) {
+                console.error('Error cargando noticias:', error);
+                newsContainer.innerHTML = '<div class="news-error">❌ Error al cargar las noticias. Inténtalo de nuevo.</div>';
+                newsStatus.textContent = 'Error al cargar noticias';
+            }
+        }
+
+        // Función para manejar cambios en los filtros
+        function handleFilterChange() {
+            const category = document.getElementById('categorySelect').value;
+            const count = parseInt(document.getElementById('countSelect').value);
+            const region = document.getElementById('regionSelect').value;
+            
+            loadNews(count, category, region);
+        }
+
+        // Función para el botón de actualizar
+        function refreshNews() {
+            const category = document.getElementById('categorySelect').value;
+            const count = parseInt(document.getElementById('countSelect').value);
+            const region = document.getElementById('regionSelect').value;
+            
+            loadNews(count, category, region);
+        }
+
+        // Función para obtener el texto legible de la región
+        function getRegionDisplayName(regionCode) {
+            const regionNames = {
+                'USA': 'Estados Unidos',
+                'EUROPE': 'Europa',
+                'ASIA': 'Asia',
+                'LATAM': 'Latinoamérica',
+                'GLOBAL': 'Global'
+            };
+            return regionNames[regionCode] || regionCode;
+        }
+
+        // Función para obtener el texto legible de la categoría
+        function getCategoryDisplayName(categoryCode) {
+            const categoryNames = {
+                'general': 'General',
+                'markets': 'Mercados',
+                'economy': 'Economía',
+                'business': 'Negocios',
+                'crypto': 'Criptomonedas',
+                'stocks': 'Acciones',
+                'forex': 'Divisas'
+            };
+            return categoryNames[categoryCode] || categoryCode;
+        }
+
+        function displayNews(newsArray) {
+            const newsContainer = document.getElementById('newsContainer');
+            
+            if (!newsArray || newsArray.length === 0) {
+                newsContainer.innerHTML = '<div class="news-error">📰 No hay noticias disponibles en este momento.</div>';
+                return;
+            }
+
+            const newsHtml = newsArray.map((article, index) => {
+                const formattedDate = formatNewsDate(article.date);
+                const thumbnailUrl = article.thumbnail || 'https://transformad.com/wp-content/uploads/2024/05/GRIS-GRAFITO-S277.png';
+                
+                return `
+                    <div class="news-card" onclick="openNewsArticle('${article.link}')" style="animation-delay: ${index * 0.1}s">
+                        <div class="news-category">${article.category}</div>
+                        <img src="${thumbnailUrl}" alt="${article.title}" class="news-thumbnail" 
+                             onerror="this.src='https://transformad.com/wp-content/uploads/2024/05/GRIS-GRAFITO-S277.png'">
+                        <div class="news-content">
+                            <div class="news-meta">
+                                <div class="news-publisher">${article.publisher}</div>
+                                <div class="news-date">${formattedDate}</div>
+                            </div>
+                            <h3 class="news-title">${article.title}</h3>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            newsContainer.innerHTML = newsHtml;
+            
+            // Animar las tarjetas cuando aparecen
+            setTimeout(() => {
+                document.querySelectorAll('.news-card').forEach((card, index) => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(30px)';
+                    
+                    setTimeout(() => {
+                        card.style.transition = 'all 0.6s ease';
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 50);
+        }
+
+        function formatNewsDate(dateString) {
+            try {
+                // Las fechas tienen un formato extraño con "+057598-", vamos a extraer la parte válida
+                const cleanDate = dateString.replace(/^\+\d+-/, '');
+                const date = new Date(cleanDate);
+                
+                if (isNaN(date.getTime())) {
+                    return 'Fecha no disponible';
+                }
+                
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) {
+                    return 'Hoy';
+                } else if (diffDays === 1) {
+                    return 'Ayer';
+                } else if (diffDays < 7) {
+                    return `Hace ${diffDays} días`;
+                } else {
+                    return date.toLocaleDateString('es-ES', {
+                        day: 'numeric',
+                        month: 'short',
+                        year: 'numeric'
+                    });
+                }
+            } catch (error) {
+                return 'Fecha no disponible';
+            }
+        }
+
+        function openNewsArticle(link) {
+            if (link && link !== '') {
+                window.open(link, '_blank', 'noopener,noreferrer');
+            }
+        }
+
+        // Funcionalidad de inicio de sesión
+        function handleLogin() {
+            const isLoggedIn = Math.random() > 0.5; // Simulación
+            
+            if (isLoggedIn) {
+                alert('¡Bienvenido de vuelta! Sesión iniciada correctamente.');
+                document.querySelector('.login-btn').textContent = 'Mi Cuenta';
+            } else {
+                // En una implementación real, abriría un modal de login
+                const modal = createLoginModal();
+                document.body.appendChild(modal);
+            }
+        }
+
+        function createLoginModal() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.8);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
+
+            modal.innerHTML = `
+                <div style="background: #1a1a2e; padding: 40px; border-radius: 20px; max-width: 400px; width: 90%;">
+                    <h2 style="margin-bottom: 20px; text-align: center;">Iniciar Sesión</h2>
+                    <input type="email" placeholder="Correo electrónico" style="width: 100%; padding: 12px; margin-bottom: 15px; border: none; border-radius: 8px; background: rgba(255,255,255,0.1); color: white;">
+                    <input type="password" placeholder="Contraseña" style="width: 100%; padding: 12px; margin-bottom: 20px; border: none; border-radius: 8px; background: rgba(255,255,255,0.1); color: white;">
+                    <button onclick="this.parentElement.parentElement.remove()" style="width: 100%; padding: 12px; background: linear-gradient(45deg, #00d4ff, #4a90e2); border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">Iniciar Sesión</button>
+                    <button onclick="this.parentElement.parentElement.remove()" style="position: absolute; top: 15px; right: 20px; background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+                </div>
+            `;
+
+            return modal;
+        }
+
+        // Funcionalidad de filtros
+        function filterAssets(category) {
+            // Actualizar botones activos
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            console.log(`Filtrando por categoría: ${category}`);
+            // Aquí implementarías la lógica de filtrado real
+        }
+
+        // Funcionalidad para abrir detalles de activo
+        function openAsset(symbol) {
+            console.log(`Abriendo detalles para: ${symbol}`);
+            alert(`Próximamente: Vista detallada de ${symbol} con gráficos, análisis técnico y noticias.`);
+        }
+
+        // Animaciones y efectos adicionales
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada para las tarjetas
+            const cards = document.querySelectorAll('.market-card, .trending-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Cargar noticias al inicio con valores por defecto
+            loadNews(10, 'general', 'USA');
+
+            // Actualización de precios simulada
+            setInterval(updatePrices, 3000);
+        });
+
+        function updatePrices() {
+            const priceElements = document.querySelectorAll('.market-price');
+            priceElements.forEach(element => {
+                const currentPrice = parseFloat(element.textContent.replace('$', '').replace(',', ''));
+                const change = (Math.random() - 0.5) * 10;
+                const newPrice = Math.max(0, currentPrice + change);
+                element.textContent = `$${newPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                
+                // Efecto de flash en el precio
+                element.style.background = change > 0 ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 71, 87, 0.2)';
+                setTimeout(() => {
+                    element.style.background = 'transparent';
+                }, 500);
+            });
+        }
+
+        // Efectos de hover mejorados
+        document.querySelectorAll('.market-card, .trending-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px) scale(1.02)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/styles/login-register.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    
+    <div class="wrapper">
+        <form>
+            <h1>Register</h1>
+            <div class="input-box">
+                <input type="text" id="reg-username" placeholder="Username" required>
+                <i class='bx bxs-user'></i>
+            </div>
+            <div class="input-box">
+                <input type="password" id="reg-password" placeholder="Password" required>
+                <i class='bx bxs-lock-alt'></i>
+            </div>
+
+            <div class="input-box">
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <i class='bx bxs-envelope' ></i>
+            </div>
+
+            <button class="btn" onclick="registerUser()">Submit</button>
+
+            <div class="register-link">
+                <p>Have already an account? <a href="/login">Sign up</a></p>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        async function registerUser() {
+            const username = document.getElementById('reg-username').value;
+            const password = document.getElementById('reg-password').value;
+            const email = document.getElementById('reg-email').value;
+            
+            // const responseElement = document.getElementById('register-response');
+            // responseElement.textContent = "Enviando solicitud...";
+            
+            try {
+                const response = await fetch('http://localhost:3000/db/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password, email })
+                });
+
+                // Verifica si la respuesta es JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                const text = await response.text();
+                throw new Error(`Respuesta inesperada: ${text.substring(0, 100)}...`);
+                }
+
+                const data = await response.json();
+                
+                if (!response.ok) {
+                throw new Error(data.error || 'Error desconocido');
+                }
+                
+                // responseElement.innerHTML = `<strong>Éxito:</strong> ${JSON.stringify(data, null, 2)}`;
+                // responseElement.style.color = 'green';
+                
+                // Limpiar formulario
+                document.getElementById('reg-username').value = '';
+                document.getElementById('reg-password').value = '';
+                document.getElementById('reg-email').value = '';
+                
+                // alert("Registro exitoso");
+                window.location.href = `/quiz?id=${data.userId}`;
+                
+
+            } catch (error) {
+                // responseElement.textContent = `Error: ${error.message}`;
+                // responseElement.style.color = 'red';
+                console.error('Error en registro:', error);
+                alert("Algo salio mal");
+            }
+        }
+        
+    </script>
+</body>
+</html>
