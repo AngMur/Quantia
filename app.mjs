@@ -40,8 +40,14 @@ app.set('view engine', 'ejs');                      // Motor .ejs permite planti
 app.set('views', path.join(__dirname, 'views'));
 
 // Ruta principal - Sirve index.html
+// app.get('/', (req, res) => {
+//     res.render('index', {});
+// });
+
 app.get('/', (req, res) => {
-    res.render('index', {});
+    res.render('index', {
+        user: req.session.user || null // Envía el usuario o null si no está logueado
+    });
 });
 
 app.get('/login', (req, res) => {
@@ -81,6 +87,15 @@ app.get('/portfolio/assets/:portfolioId', (req, res) => {
         // otros datos que quieras pasar a la plantilla
         title: `Portfolio ${portfolioId}`,
         // portfolioData: portfolioData
+    });
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            res.session.errorMessage('Error al cerrar sesion');
+        }
+        res.render('index');
     });
 });
 
