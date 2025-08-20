@@ -566,8 +566,8 @@
     try {
         // Cargar datos del usuario
         const [userResponse, transactionsResponse] = await Promise.all([
-            fetch(`http://localhost:3000/db/user/${currentUser.id}`),
-            fetch(`http://localhost:3000/db/transactions/${currentUser.id}?limit=10`)
+            fetch(`/db/user/${currentUser.id}`),
+            fetch(`/db/transactions/${currentUser.id}?limit=10`)
         ]);
 
         if (!userResponse.ok || !transactionsResponse.ok) {
@@ -690,7 +690,7 @@ function formatMySQLDate(mysqlDate) {
                     depositBtn.textContent = 'Procesando...';
                     
                     // Enviar solicitud al endpoint
-                    const response = await fetch('http://localhost:3000/db/deposit', {
+                    const response = await fetch('/db/deposit', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -751,7 +751,7 @@ function formatMySQLDate(mysqlDate) {
                     withdrawBtn.textContent = 'Procesando...';
                     
                     // Enviar solicitud al endpoint
-                    const response = await fetch('http://localhost:3000/db/withdrawal', {
+                    const response = await fetch('/db/withdrawal', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'

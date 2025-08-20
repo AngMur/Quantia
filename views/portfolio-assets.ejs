@@ -1621,7 +1621,7 @@
         async function fetchPortfolioAssets() {
             try {
                 // const portfolioId = <%portfolioId%>;
-                const response = await fetch('http://localhost:3000/db/portfolio/assets/' + portfolioId);
+                const response = await fetch('/db/portfolio/assets/' + portfolioId);
                 
                 if (!response.ok) {
                     throw new Error('Error ' + response.status + ': No se pudo conectar con el servidor');
@@ -1646,7 +1646,7 @@
         async function fetchAssetPrices(assets) {
             const pricePromises = assets.map(async (asset) => {
                 try {
-                    const response = await fetch('http://localhost:3000/api/price/' + asset.asset_symbol);
+                    const response = await fetch('/api/price/' + asset.asset_symbol);
                     if (response.ok) {
                         const priceData = await response.json();
                         assetPrices[asset.asset_symbol] = priceData;
@@ -1812,41 +1812,41 @@
                     '</div>' +
                 '</div>' +
                 
-                '<div class="actions-bar">' +
-                    '<button class="btn btn-primary">📈 Agregar Activo</button>' +
-                    '<button class="btn btn-secondary">📊 Exportar Datos</button>' +
-                    '<button class="btn btn-secondary">📋 Ver Análisis</button>' +
-                    '<button class="btn btn-secondary">⚖️ Rebalancear</button>' +
-                '</div>' +
+                // '<div class="actions-bar">' +
+                //     '<button class="btn btn-primary">📈 Agregar Activo</button>' +
+                //     '<button class="btn btn-secondary">📊 Exportar Datos</button>' +
+                //     '<button class="btn btn-secondary">📋 Ver Análisis</button>' +
+                //     '<button class="btn btn-secondary">⚖️ Rebalancear</button>' +
+                // '</div>' +
                 
-                '<div class="filters-bar">' +
-                    '<div class="filter-group">' +
-                        '<span class="filter-label">📊 Ordenar por:</span>' +
-                        '<select class="filter-select">' +
-                            '<option>Valor (Mayor a Menor)</option>' +
-                            '<option>Valor (Menor a Mayor)</option>' +
-                            '<option>Rendimiento</option>' +
-                            '<option>Símbolo</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class="filter-group">' +
-                        '<span class="filter-label">📁 Tipo:</span>' +
-                        '<select class="filter-select">' +
-                            '<option>Todos los Activos</option>' +
-                            '<option>Acciones</option>' +
-                            '<option>ETFs</option>' +
-                            '<option>Crypto</option>' +
-                        '</select>' +
-                    '</div>' +
-                    '<div class="filter-group">' +
-                        '<span class="filter-label">📈 Rendimiento:</span>' +
-                        '<select class="filter-select">' +
-                            '<option>Todos</option>' +
-                            '<option>Positivos</option>' +
-                            '<option>Negativos</option>' +
-                        '</select>' +
-                    '</div>' +
-                '</div>' +
+                // '<div class="filters-bar">' +
+                //     '<div class="filter-group">' +
+                //         '<span class="filter-label">📊 Ordenar por:</span>' +
+                //         '<select class="filter-select">' +
+                //             '<option>Valor (Mayor a Menor)</option>' +
+                //             '<option>Valor (Menor a Mayor)</option>' +
+                //             '<option>Rendimiento</option>' +
+                //             '<option>Símbolo</option>' +
+                //         '</select>' +
+                //     '</div>' +
+                //     '<div class="filter-group">' +
+                //         '<span class="filter-label">📁 Tipo:</span>' +
+                //         '<select class="filter-select">' +
+                //             '<option>Todos los Activos</option>' +
+                //             '<option>Acciones</option>' +
+                //             '<option>ETFs</option>' +
+                //             '<option>Crypto</option>' +
+                //         '</select>' +
+                //     '</div>' +
+                //     '<div class="filter-group">' +
+                //         '<span class="filter-label">📈 Rendimiento:</span>' +
+                //         '<select class="filter-select">' +
+                //             '<option>Todos</option>' +
+                //             '<option>Positivos</option>' +
+                //             '<option>Negativos</option>' +
+                //         '</select>' +
+                //     '</div>' +
+                // '</div>' +
                 
                 '<div class="investments-section">' +
                     '<div class="section-header">' +

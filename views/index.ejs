@@ -55,8 +55,8 @@
 
         .search-container {
             flex: 1;
-            max-width: 500px;
-            margin: 0 30px;
+            min-width: 500px;
+            margin: 0 10px;
             position: relative;
         }
 
@@ -125,11 +125,13 @@
 
         .search-result-item .stock-symbol {
             font-weight: 600;
+            text-align: left;
             color: #00d4ff;
         }
 
         .search-result-item .stock-name {
             font-size: 12px;
+            text-align: left;
             color: #b2bec3;
             margin-top: 2px;
         }
@@ -175,6 +177,10 @@
         .hero-section {
             text-align: center;
             margin-bottom: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
 
         .hero-title {
@@ -289,25 +295,74 @@
             font-size: 12px;
         }
 
-        /* .mini-chart {
-            height: 60px;
-            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%);
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
+        
+                .header {
+                    width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
         }
 
-        .mini-chart::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 10px;
-            right: 10px;
-            height: 2px;
-            background: linear-gradient(90deg, #00d4ff, #4a90e2);
-            border-radius: 1px;
-        } */
+        .nav-container {
+            max-width: 1200px;
+            width: 100%;
+        } 
 
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+         .nav-menu {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-menu a.active,
+        .nav-menu a:hover {
+            color: #00d4ff;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(45deg, #00d4ff, #4a90e2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        } 
         .news-section {
             margin-bottom: 40px;
         }
@@ -617,19 +672,33 @@
         <div class="floating-circle circle3"></div>
     </div>
 
-    <header class="header">
+    <!-- <header class="header">
         <div class="nav-container">
             <div class="logo"><a href="/">Quantia</a></div>
             
-            <div class="search-container">
-                <input type="text" class="search-box" placeholder="Buscar activos..." id="searchInput">
-                <div class="search-icon">🔍</div>
-                <div class="search-results" id="searchResults"></div>
-            </div>
             
+            <a class="login-btn" href="/market">Mercado</a>
             <a class="login-btn" href="/balance">Cuenta</a>
             <a class="login-btn" href="/port-selector">Portafolio</a>
             <a class="login-btn" href="/login">Iniciar Sesión</a>
+        </div>
+    </header> -->
+
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo"><a href="/">Quantia</a></div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="/market">Market</a></li>
+                    <li><a href="/balance" class="active">Balance</a></li>
+                    <li><a href="/port-selector">Portfolios</a></li>
+                    <li><a href="/">Analyse</a></li>
+                </ul>
+            </nav>
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">JP</div>
+                <span id="usernameDisplay">Juan Pérez</span>
+            </div>
         </div>
     </header>
 
@@ -637,6 +706,11 @@
         <section class="hero-section">
             <h1 class="hero-title">Análisis Financiero Inteligente</h1>
             <p class="hero-subtitle">Explora mercados, analiza tendencias y toma decisiones informadas</p>
+            <div class="search-container">
+                <input type="text" class="search-box" placeholder="Buscar activos..." id="searchInput">
+                <div class="search-icon">🔍</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
         </section>
 
         <div class="categories">
@@ -819,6 +893,7 @@
             });
         }
 
+    
         async function handleSearch() {
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const searchResults = document.getElementById('searchResults');
@@ -865,7 +940,7 @@
                 return [];
             }
             
-            const url = `http://localhost:3000/api/search/${searchTerm}`;
+            const url = `/api/search/${searchTerm}`;
             
             try {
                 const response = await fetch(url);
@@ -906,13 +981,15 @@
                 
 
                 let url;
+                const baseUrl = window.location.origin; // O tu URL base específica
+
                 if(symbol === ''){
-                    url = new URL('http://localhost:3000/api/news');
+                    url = new URL('/api/news', baseUrl);
                     url.searchParams.append('count', count);
                     url.searchParams.append('category', category);
                     url.searchParams.append('region', region);
                 }else{
-                    url = new URL(`http://localhost:3000/api/news/${symbol}`)
+                    url = new URL(`/api/news/${symbol}`, baseUrl);
                 }
                 
                 

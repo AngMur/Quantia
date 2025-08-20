@@ -261,7 +261,7 @@
 
         async function fetchPortfolios() {
             try {
-                const response = await fetch(`http://localhost:3000/db/portfolios/${userId}`);
+                const response = await fetch(`/db/portfolios/${userId}`);
                 
                 if (!response.ok) {
                     throw new Error('Error ' + response.status + ': No se pudo conectar con el servidor');

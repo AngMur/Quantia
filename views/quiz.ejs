@@ -508,7 +508,7 @@
         async function changeRiskLevel(risk, userId) {
 
             try {
-                const response = await fetch('http://localhost:3000/db/change-risk', {
+                const response = await fetch('/db/change-risk', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

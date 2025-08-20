@@ -9,6 +9,10 @@
 </head>
 <body>
     
+    <header class="header">
+            <div class="logo"><a href="/">Quantia</a></div>
+    </header>
+    <main>
     <div class="wrapper">
         <form>
             <h1>Register</h1>
@@ -34,6 +38,7 @@
 
         </form>
     </div>
+    </main>
 
     <script>
         async function registerUser() {
@@ -45,7 +50,7 @@
             // responseElement.textContent = "Enviando solicitud...";
             
             try {
-                const response = await fetch('http://localhost:3000/db/register', {
+                const response = await fetch('/db/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

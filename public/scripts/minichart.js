@@ -18,7 +18,7 @@
         // // Función para obtener datos del stock desde la API
         // async function fetchStockData(symbol) {
         //     try {
-        //         const response = await fetch(`http://localhost:3000/api/today/${symbol}`);
+        //         const response = await fetch(`/api/today/${symbol}`);
                 
         //         if (!response.ok) {
         //             throw new Error(`Error HTTP: ${response.status}`);
@@ -209,7 +209,7 @@ function formatDate(dateStr) {
 // Función para obtener datos del stock desde la API
 async function fetchStockData(symbol) {
     try {
-        const response = await fetch(`http://localhost:3000/api/today/${symbol}`);
+        const response = await fetch(`/api/today/${symbol}`);
         
         if (!response.ok) {
             throw new Error(`Error HTTP: ${response.status}`);
@@ -372,14 +372,14 @@ async function updateChart(symbol, chartId) {
 // Inicializar los gráficos cuando la página cargue
 window.addEventListener('load', () => {
     updateChart('IBM', 'chartContainer');
-    updateChart('AMZN', 'chartContainer2');
-    updateChart('AAPL', 'chartContainer3');
+    // updateChart('AMZN', 'chartContainer2');
+    // updateChart('AAPL', 'chartContainer3');
     
     // Configurar actualización periódica
     refreshInterval = setInterval(() => {
         updateChart('IBM', 'chartContainer');
-        updateChart('AMZN', 'chartContainer2');
-        updateChart('AAPL', 'chartContainer3');
+        // updateChart('AMZN', 'chartContainer2');
+        // updateChart('AAPL', 'chartContainer3');
     }, UPDATE_INTERVAL);
 });
 
@@ -390,3 +390,9 @@ window.addEventListener('beforeunload', () => {
     // Destruir todos los gráficos
     Object.values(stockCharts).forEach(chart => chart.destroy());
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+            // Animación de entrada para las tarjetas
+                    updateChart('IBM', 'chartContainer');
+
+        });

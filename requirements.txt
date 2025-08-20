@@ -1,1 +1,1 @@
-express express-session path cors body-parser url mysql2 ejs
+express express-session path cors body-parser url mysql2 ejs yahoo-finance2
