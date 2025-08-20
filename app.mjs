@@ -64,11 +64,15 @@ app.get('/quiz', (req, res) => {
 });
 
 app.get('/balance', (req, res) => {
-    res.render('balance', {});
+    res.render('balance', {
+        user: req.session.user || null // Envía el usuario o null si no está logueado
+    });
 });
 
 app.get('/port-selector', (req, res) => {
-    res.render('port-selector', {});
+    res.render('port-selector', {
+        user: req.session.user || null // Envía el usuario o null si no está logueado
+    });
 });
 
 app.get('/market', (req, res) => {
@@ -95,7 +99,8 @@ app.get('/logout', (req, res) => {
         if (err) {
             res.session.errorMessage('Error al cerrar sesion');
         }
-        res.render('index');
+        res.redirect('/');
+
     });
 });
 
@@ -176,6 +181,59 @@ app.post("/db/login", async (req, res) => {
 });
 
 
+// app.post("/db/register", async (req, res) => {
+//   const { username, password, email } = req.body;
+
+//   // Validación
+//   if(!username || !password || !email){
+//     return res.status(400).json({
+//       success: false,
+//       message: "Username, password and email is required to register"
+//     });
+//   }
+
+//   try {
+//     const connection = await pool.getConnection();
+    
+//     // Verificar usuario existente (con await)
+//     const [existingUsers] = await connection.query(
+//       'SELECT * FROM users WHERE username = ? OR email = ?',
+//       [username, email]
+//     );
+
+//     if(existingUsers.length > 0){
+//       connection.release();
+//       return res.status(409).json({
+//         success: false,
+//         message: "Username or email is already registered"
+//       });
+//     }
+
+//     // Insertar nuevo usuario (3 ? para 3 valores)
+//     const [result] = await connection.query(
+//       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+//       [username, password, email]
+//     );
+
+//     connection.release();
+
+
+//     return res.status(201).json({
+//       success: true,
+//       message: "User has been added successfully",
+//       userId: result.insertId
+//     });
+
+//   } catch(err) {
+//     console.error("Registration error:", err);
+//     return res.status(500).json({
+//       success: false,  // Corregido a false
+//       message: "Error during register",
+//       error: err.message
+//     });
+//   }
+// });
+
 app.post("/db/register", async (req, res) => {
   const { username, password, email } = req.body;
 
@@ -187,10 +245,27 @@ app.post("/db/register", async (req, res) => {
     });
   }
 
+  // Validación de email
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide a valid email address"
+    });
+  }
+
+  // Validación de fortaleza de password
+  if (password.length < 6) {
+    return res.status(400).json({
+      success: false,
+      message: "Password must be at least 6 characters long"
+    });
+  }
+
   try {
     const connection = await pool.getConnection();
     
-    // Verificar usuario existente (con await)
+    // Verificar usuario existente
     const [existingUsers] = await connection.query(
       'SELECT * FROM users WHERE username = ? OR email = ?',
       [username, email]
@@ -198,13 +273,31 @@ app.post("/db/register", async (req, res) => {
 
     if(existingUsers.length > 0){
       connection.release();
+      
+      // Detectar específicamente qué existe
+      const usernameExists = existingUsers.some(user => user.username === username);
+      const emailExists = existingUsers.some(user => user.email === email);
+      
+      let message = "Registration failed";
+      if (usernameExists && emailExists) {
+        message = "Username and email are already registered";
+      } else if (usernameExists) {
+        message = "Username is already taken";
+      } else if (emailExists) {
+        message = "Email is already registered";
+      }
+
       return res.status(409).json({
         success: false,
-        message: "Username or email is already registered"
+        message: message,
+        conflict: {
+          username: usernameExists,
+          email: emailExists
+        }
       });
     }
 
-    // Insertar nuevo usuario (3 ? para 3 valores)
+    // Insertar nuevo usuario
     const [result] = await connection.query(
       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
       [username, password, email]
@@ -212,18 +305,58 @@ app.post("/db/register", async (req, res) => {
 
     connection.release();
 
-    return res.status(201).json({
-      success: true,
-      message: "User has been added successfully",
-      userId: result.insertId
+    // Crear sesión automáticamente después del registro
+    req.session.user = {
+      id: result.insertId,
+      username: username,
+      email: email,
+      loggedIn: true,
+      loginTime: new Date(),
+      isNewUser: true // Bandera para identificar usuario recién registrado
+    };
+
+    // Guardar la sesión
+    req.session.save((err) => {
+      if (err) {
+        console.error('Session save error:', err);
+        // Aún así responder éxito pero con advertencia de sesión
+        return res.status(201).json({
+          success: true,
+          message: "User registered successfully but session creation failed",
+          userId: result.insertId,
+          warning: "Please login manually"
+        });
+      }
+
+      // Respuesta exitosa con datos de sesión
+      return res.status(201).json({
+        success: true,
+        message: "User registered and logged in successfully",
+        user: {
+          id: result.insertId,
+          username: username,
+          email: email
+        },
+        sessionCreated: true
+      });
     });
 
   } catch(err) {
     console.error("Registration error:", err);
+    
+    // Manejar errores específicos de base de datos
+    if (err.code === 'ER_DUP_ENTRY') {
+      return res.status(409).json({
+        success: false,
+        message: "Username or email already exists",
+        error: "Duplicate entry"
+      });
+    }
+    
     return res.status(500).json({
-      success: false,  // Corregido a false
-      message: "Error during register",
-      error: err.message
+      success: false,
+      message: "Error during registration",
+      error: process.env.NODE_ENV === 'development' ? err.message : "Internal server error"
     });
   }
 });
@@ -1094,7 +1227,7 @@ app.use((req, res) => {
 // Manejador de errores global
 app.use((err, req, res, next) => {
     console.error(err.stack);
-    res.status(500).json({ error: 'Algo salió mal en el servidor' });
+    res.status(404).sendFile(path.join(__dirname, 'public', '500.html'));
 });
 
 function startServer() {

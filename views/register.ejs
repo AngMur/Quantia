@@ -13,6 +13,7 @@
             <div class="logo"><a href="/">Quantia</a></div>
     </header>
     <main>
+    <p></p>
     <div class="wrapper">
         <form>
             <h1>Register</h1>
@@ -66,10 +67,12 @@
                 }
 
                 const data = await response.json();
-                
+
                 if (!response.ok) {
+                alert(data.message);
                 throw new Error(data.error || 'Error desconocido');
                 }
+                
                 
                 // responseElement.innerHTML = `<strong>Éxito:</strong> ${JSON.stringify(data, null, 2)}`;
                 // responseElement.style.color = 'green';
@@ -87,7 +90,7 @@
                 // responseElement.textContent = `Error: ${error.message}`;
                 // responseElement.style.color = 'red';
                 console.error('Error en registro:', error);
-                alert("Algo salio mal");
+                // alert("Usuario o correo ocupados intenta con otros diferentes.");
             }
         }
         
