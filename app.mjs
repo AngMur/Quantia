@@ -44,6 +44,17 @@ app.set('views', path.join(__dirname, 'views'));
 //     res.render('index', {});
 // });
 
+// Middleware para verificar autenticación
+const requireAuth = (req, res, next) => {
+    if (req.session.user) {
+        // Usuario autenticado, continuar
+        next();
+    } else {
+        // Usuario no autenticado, redirigir a login
+        res.redirect('/login');
+    }
+};
+
 app.get('/', (req, res) => {
     res.render('index', {
         user: req.session.user || null // Envía el usuario o null si no está logueado
@@ -63,44 +74,44 @@ app.get('/quiz', (req, res) => {
     res.render('quiz', { userId: userId });
 });
 
-app.get('/balance', (req, res) => {
+// Rutas protegidas que requieren autenticación
+app.get('/balance', requireAuth, (req, res) => {
     res.render('balance', {
-        user: req.session.user || null // Envía el usuario o null si no está logueado
+        user: req.session.user // Ya está autenticado, no necesita el operador ||
     });
 });
 
-app.get('/port-selector', (req, res) => {
+app.get('/port-selector', requireAuth, (req, res) => {
     res.render('port-selector', {
-        user: req.session.user || null // Envía el usuario o null si no está logueado
+        user: req.session.user
     });
 });
 
-app.get('/market', (req, res) => {
-    res.render('market.ejs', {});
+app.get('/market', requireAuth, (req, res) => {
+    res.render('market', {
+        user: req.session.user
+    });
 });
 
 // Ruta para renderizar la plantilla de assets de un portfolio específico
-app.get('/portfolio/assets/:portfolioId', (req, res) => {
+app.get('/portfolio/assets/:portfolioId', requireAuth, (req, res) => {
     const { portfolioId } = req.params;
-    
-    // Aquí puedes obtener los datos del portfolio desde tu base de datos si es necesario
-    // const portfolioData = await getPortfolioById(portfolioId);
     
     res.render('portfolio-assets', {
         portfolioId: portfolioId,
-        // otros datos que quieras pasar a la plantilla
-        title: `Portfolio ${portfolioId}`,
-        // portfolioData: portfolioData
+        user: req.session.user, // Añadir usuario a la plantilla
+        title: `Portfolio ${portfolioId}`
     });
 });
 
-app.get('/logout', (req, res) => {
+app.get('/logout', requireAuth, (req, res) => {
     req.session.destroy((err) => {
         if (err) {
-            res.session.errorMessage('Error al cerrar sesion');
+            // Manejar error de forma más robusta
+            console.error('Error al cerrar sesión:', err);
+            return res.status(500).send('Error al cerrar sesión');
         }
         res.redirect('/');
-
     });
 });
 

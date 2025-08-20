@@ -447,10 +447,10 @@
                     <li><a href="/market">Market</a></li>
                     <li><a href="/balance" class="active">Balance</a></li>
                     <li><a href="/port-selector">Portfolio</a></li>
-                    <li><a href="/analyse">Noticias</a></li>
+                    <li><a href="/analyse">Analyse</a></li>
                 </ul>
             </nav>
-                            <div class="user-profile" onclick="toggleUserMenu(event)">
+<div class="user-profile" onclick="toggleUserMenu(event)">
     <div class="user-avatar" id="userAvatar">
         <%= user.username ? user.username.substring(0, 2).toUpperCase() : 'US' %>
     </div>
@@ -586,10 +586,7 @@
 
         // Inicialización al cargar la página
         document.addEventListener('DOMContentLoaded', async () => {
-            // Simular usuario logueado (en una app real esto vendría de la sesión)
-            currentUser = { id: 1, username: 'juan_perez', name: 'Juan Pérez' };
-            document.getElementById('userAvatar').textContent = currentUser.name.substring(0, 2);
-            document.getElementById('usernameDisplay').textContent = currentUser.name;
+            // Simular usuario logueado (en una app real esto vendría de la sesión
             
             // Cargar datos del usuario
             await loadUserData();
