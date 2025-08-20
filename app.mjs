@@ -76,6 +76,7 @@ app.get('/quiz', (req, res) => {
 
 // Rutas protegidas que requieren autenticación
 app.get('/balance', requireAuth, (req, res) => {
+    console.log(req.session.user);
     res.render('balance', {
         user: req.session.user // Ya está autenticado, no necesita el operador ||
     });
@@ -162,9 +163,9 @@ app.post("/db/login", async (req, res) => {
     }
     
     const login_user = users[0];
-
+    // console.log(login_user);
     req.session.user = {
-      id: login_user.id,
+      id: login_user.user_id,
       username: login_user.username,
       // No guardar la password en sesión por seguridad
       loggedIn: true,

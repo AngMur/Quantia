@@ -580,7 +580,8 @@
 
     <script>
         // Variables globales
-        let currentUser = null;
+        let currentUser = <%- JSON.stringify(user || null) %>;
+        console.log(currentUser);
         let currentBalance = 0;
         let transactions = [];
 
