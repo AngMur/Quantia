@@ -94,15 +94,74 @@ app.get('/market', requireAuth, (req, res) => {
     });
 });
 
-// Ruta para renderizar la plantilla de assets de un portfolio específico
-app.get('/portfolio/assets/:portfolioId', requireAuth, (req, res) => {
-    const { portfolioId } = req.params;
-    
-    res.render('portfolio-assets', {
-        portfolioId: portfolioId,
-        user: req.session.user, // Añadir usuario a la plantilla
-        title: `Portfolio ${portfolioId}`
+app.get('/analyse', requireAuth, (req, res) => {
+    res.render('analyse', {
+        user: req.session.user
     });
+});
+
+app.get('/analyse/historic', requireAuth, (req, res) => {
+    res.render('historic', {
+        user: req.session.user
+    });
+});
+
+// Ruta para renderizar la plantilla de assets de un portfolio específico
+// app.get('/portfolio-info', requireAuth, (req, res) => {
+//     const { portfolioId } = req.params;
+//     res.render('portfolio-assets', {
+//         portfolioId: portfolioId,
+//         user: req.session.user, // Añadir usuario a la plantilla
+//         title: `Portfolio ${portfolioId}`
+//     });
+// });
+
+app.get('/portfolio-info', requireAuth, (req, res) => {
+    try {
+        // Obtener el portfolioId de la sesión en lugar de los parámetros
+        const portfolioId = req.session.portfolioId;
+        
+        // Verificar que el portfolioId existe en la sesión
+        if (!portfolioId) {
+            // Redirigir a una página de selección o mostrar error
+            return res.status(400).render('error', {
+                message: 'No se ha seleccionado ningún portfolio',
+                user: req.session.user,
+                title: 'Error - Portfolio no seleccionado',
+                redirectUrl: '/seleccionar-portfolio' // Opcional: URL para redirigir
+            });
+        }
+        
+        // Renderizar la plantilla con el portfolioId de la sesión
+        res.render('portfolio-assets', {
+            portfolioId: portfolioId,
+            user: req.session.user
+        });
+        
+    } catch (error) {
+        console.error('Error en /portfolio-info:', error);
+        res.status(500).render('error', {
+            message: 'Error interno del servidor',
+            user: req.session.user,
+            title: 'Error'
+        });
+    }
+});
+
+app.get('/portfolio/assets/:portfolioId', requireAuth, (req, res) => {
+    try {
+        const { portfolioId } = req.params;
+        
+        // Guardar el portfolioId en la sesión
+        req.session.portfolioId = portfolioId;
+    
+        // Redirigir a /portafolio-info
+        res.redirect('/portfolio-info');
+        
+    } catch (error) {
+        console.error('Error al guardar portfolio en sesión:', error);
+        res.status(500);
+    }
 });
 
 app.get('/logout', requireAuth, (req, res) => {
@@ -861,7 +920,7 @@ app.post("/db/buy-asset",async (req, res) => {
 });
 
 // Endpoint para vender activos
-app.post("db/sell-asset", async (req, res) => {
+app.post("/db/sell-asset", async (req, res) => {
     try {
         const { userId, portfolioId, assetSymbol, quantity, price } = req.body;
         
@@ -961,8 +1020,8 @@ app.get("/api/historical/:symbol", async (req, res) => {
 
   try {
     const hist = await yahooFinance.chart(symbol, {
-      period1: "1900-01-01",
-      // period1: "2025-07-01",
+      /*period1: "1900-01-01",*/
+      period1: "2020-01-01",
       period2: new Date(),
       interval: "1d"
     });
@@ -1009,11 +1068,11 @@ app.get("/api/today/:symbol", async (req, res) => {
       lastUpdate: new Date().toISOString(),
       dataPoints: todayData.map(quote => ({
         time: quote.date.toISOString(),
-        open: quote.open,
-        high: quote.high,
-        low: quote.low,
-        close: quote.close,
-        volume: quote.volume
+        open: quote.open.toFixed(2),
+        high: quote.high.toFixed(2),
+        low: quote.low.toFixed(2),
+        close: quote.close.toFixed(2),
+        volume: quote.volume.toFixed(2)
       }))
     };
 

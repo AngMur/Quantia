@@ -6,7 +6,7 @@
     <title>Mi Portafolio - FinanceHub</title>
     <style>
         /* (Todos tus estilos CSS anteriores aquí) */
-        * {
+                * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -23,6 +23,7 @@
         /* Header Styles */
         .header {
             background: rgba(15, 23, 42, 0.9);
+            
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(148, 163, 184, 0.1);
             padding: 1rem 0;
@@ -131,6 +132,7 @@
         }
 
         .portfolio-subtitle {
+            
             font-size: 1.125rem;
             color: #94a3b8;
             margin-bottom: 2rem;
@@ -658,7 +660,6 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            overflow: scroll;
         }
 
         .modal-overlay.active {
@@ -984,17 +985,12 @@
     <script>
         const portfolioId = <%- JSON.stringify(portfolioId) %>;
         console.log('Portfolio ID:', portfolioId);
-        let currentUser = <%- JSON.stringify(user || null) %>;
-        const userId = currentUser.id;
-        let globalQuantity = 0;
-                let totalTrade = 0;
 
         let portfolioData = null;
         let assets = [];
         let assetPrices = {};
         let currentSymbol = '';
         let currentAction = '';
-        let currentUserData = null;
 
         // Funciones del modal
         function openModal() {
@@ -1007,44 +1003,31 @@
             document.body.style.overflow = 'auto';
         }
 
-        async function buy(symbol, quantity) {
+        async function buy(symbol) {
             currentSymbol = symbol;
             currentAction = 'buy';
-            globalQuantity = quantity;
             openModal();
-            await loadAssetData(symbol, quantity);
+            await loadAssetData(symbol);
         }
 
-        async function sell(symbol, quantity) {
+        async function sell(symbol) {
             currentSymbol = symbol;
             currentAction = 'sell';
-            globalQuantity = quantity;
-
             openModal();
-            await loadAssetData(symbol, quantity);
+            await loadAssetData(symbol);
         }
 
-        async function loadAssetData(symbol, quantity) {
+        async function loadAssetData(symbol) {
             try {
                 document.getElementById('modalTitle').textContent = currentAction === 'buy' ? 'Comprar ' + symbol : 'Vender ' + symbol;
                 
-                // Obtener datos del precio del activo
-                const priceResponse = await fetch(`http://localhost:5000/api/price/${symbol}`);
-                if (!priceResponse.ok) {
+                const response = await fetch(`http://localhost:5000/api/price/${symbol}`);
+                if (!response.ok) {
                     throw new Error('Error al obtener datos del activo');
                 }
-                const priceData = await priceResponse.json();
                 
-                // Obtener datos del usuario
-                const userResponse = await fetch(`http://localhost:5000/db/user/${userId}`);
-                if (!userResponse.ok) {
-                    throw new Error('Error al obtener datos del usuario');
-                }
-                const userData = await userResponse.json();
-                
-                currentUserData = userData.data;
-                
-                renderTradeModal(priceData, userData.data, quantity);
+                const priceData = await response.json();
+                renderTradeModal(priceData);
                 
             } catch (error) {
                 document.getElementById('modalContent').innerHTML = `
@@ -1057,15 +1040,9 @@
             }
         }
 
-        let globalBalance = 0;
-
-        function renderTradeModal(priceData, userData, quantity) {
+        function renderTradeModal(priceData) {
             const isBuy = currentAction === 'buy';
             const actionText = isBuy ? 'Comprar' : 'Vender';
-            // globalQuantity = quantity;
-            globalBalance = userData.balance;
-            totalTrade = priceData.currentPrice;
-            
             
             document.getElementById('modalContent').innerHTML = `
                 <div class="asset-info-modal">
@@ -1094,17 +1071,6 @@
                     <div class="price-row">
                         <span class="price-label">Mercado:</span>
                         <span class="price-value">${priceData.isMarketOpen ? '🟢 Abierto' : '🔴 Cerrado'}</span>
-                    </div>
-                </div>
-
-                <div class="price-info-modal">
-                    <div class="price-row">
-                        <span class="price-label">Saldo disponible:</span>
-                        <span class="price-value">${formatCurrency(userData.balance)}</span>
-                    </div>
-                    <div class="price-row">
-                        <span class="price-label">Cantidad:</span>
-                        <span class="price-value">${globalQuantity}</span>
                     </div>
                 </div>
 
@@ -1142,107 +1108,24 @@
             `;
         }
 
-
-
         function calculateTotal(pricePerUnit) {
             const quantity = parseInt(document.getElementById('quantity').value) || 0;
             const total = quantity * pricePerUnit;
-            totalTrade = total;
             document.getElementById('totalAmount').textContent = formatCurrency(total);
             document.getElementById('finalAmount').textContent = formatCurrency(total);
         }
 
-        async function executeTrade() {
+        function executeTrade() {
             const quantity = parseInt(document.getElementById('quantity').value) || 0;
             if (quantity <= 0) {
                 alert('Por favor, ingrese una cantidad válida');
                 return;
-            } else if(currentAction == "sell" && quantity > globalQuantity){
-                alert("No puedes vender más activos de los que posees");
-                return;
-            } else if(currentAction == "buy" && totalTrade > globalBalance){
-                alert("No tienes sufiente saldo para esta operacion");
-                return;
             }
 
-             
-    try {
-        console.log(JSON.stringify({
-                userId: userId, // ID del usuario actual
-                portfolioId: portfolioId,
-                assetSymbol: currentSymbol,
-                quantity: quantity,
-                price: parseFloat(totalTrade) // Convertir a número
-            }));
-        // CORRECCIÓN: Añadir / antes de la ruta del endpoint
-        const endpoint = currentAction === 'buy' ? '/db/buy-asset' : '/db/sell-asset';
-        
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            // CORRECCIÓN: Asegurar que price es un número, no un string
-            body: JSON.stringify({
-                userId: userId, // ID del usuario actual
-                portfolioId: portfolioId,
-                assetSymbol: currentSymbol,
-                quantity: quantity,
-                price: parseFloat(totalTrade) // Convertir a número
-            })
-        });
-
-        // CORRECCIÓN: Manejar mejor los errores HTTP
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || `Error ${response.status}: ${response.statusText}`);
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-            // Transacción exitosa
-            document.getElementById('modalContent').innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;">✅</div>
-                    <h3 style="color: #f8fafc; margin-bottom: 1rem;">${currentAction === 'buy' ? 'Compra' : 'Venta'} Exitosa</h3>
-                    <p style="color: #94a3b8; margin-bottom: 1.5rem;">
-                        ${result.message}<br>
-                        ${quantity} acciones de ${currentSymbol} por ${formatCurrency(totalTrade)}
-                    </p>
-                    <button class="btn-modal btn-modal-primary" onclick="closeModalAndRefresh()">Aceptar</button>
-                </div>
-            `;
+            const action = currentAction === 'buy' ? 'compra' : 'venta';
+            alert(`✅ ${action.toUpperCase()} EJECUTADA\nSímbolo: ${currentSymbol}\nCantidad: ${quantity}\n\nLa operación se ha completado exitosamente.`);
             
-            // Actualizar datos del usuario después de la transacción
-            location.reload();
-        } else {
-            // Error en la transacción
-            throw new Error(result.error || 'Error desconocido en la transacción');
-        }
-    } catch (error) {
-        console.error('Error en la transacción:', error);
-        document.getElementById('modalContent').innerHTML = `
-            <div style="text-align: center; padding: 2rem;">
-                <div style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;">❌</div>
-                <h3 style="color: #f8fafc; margin-bottom: 1rem;">Error en la Transacción</h3>
-                <p style="color: #94a3b8; margin-bottom: 1.5rem;">${error.message}</p>
-                <div class="modal-actions">
-                    <button class="btn-modal btn-modal-secondary" onclick="closeModal()">Cancelar</button>
-                    <button class="btn-modal btn-modal-primary" onclick="executeTrade()">Reintentar</button>
-                </div>
-            </div>
-        `;
-    }
-
-
-            
-
-            
-            // const action = currentAction === 'buy' ? 'compra' : 'venta';
-            // alert(`✅ ${action.toUpperCase()} EJECUTADA\nSímbolo: ${currentSymbol}\nCantidad: ${quantity}\n\nLa operación se ha completado exitosamente.`);
-            
-            // closeModal();
+            closeModal();
             // Aquí puedes agregar la lógica para enviar la orden al servidor
         }
 
@@ -1279,6 +1162,15 @@
         }
 
         // Resto de tu código original (fetchPortfolioAssets, renderPortfolioView, etc.)
+        // ... (mantén todas las funciones originales del portafolio)
+
+        // const portfolioId = <%- JSON.stringify(portfolioId) %>;
+        // console.log('Portfolio ID:', portfolioId);
+
+        // let portfolioData = null;
+        // let assets = [];
+        // let assetPrices = {};
+
         async function fetchPortfolioAssets() {
             try {
                 const response = await fetch('/db/portfolio/assets/' + portfolioId);
@@ -1317,6 +1209,30 @@
             });
             
             await Promise.all(pricePromises);
+        }
+
+        function formatCurrency(amount) {
+            return '$' + new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(amount);
+        }
+
+        function formatPercentage(value) {
+            const num = parseFloat(value);
+            const sign = num >= 0 ? '+' : '';
+            return sign + num.toFixed(2) + '%';
+        }
+
+        function getChangeClass(value) {
+            const num = parseFloat(value);
+            if (num > 0) return 'positive';
+            if (num < 0) return 'negative';
+            return 'neutral';
+        }
+
+        function getAssetIcon(symbol) {
+            return symbol.substring(0, 2).toUpperCase();
         }
 
         function renderError(message) {
@@ -1375,7 +1291,6 @@
                     }
 
                     const symbol1 = asset.asset_symbol; // Usar el símbolo real
-                   
                     
                     assetsTableHTML += 
                         '<tr class="table-row">' +
@@ -1414,8 +1329,8 @@
                             '</td>' +
                             '<td class="table-cell actions-cell">' +
                                 // ✅ CORREGIDO: Añadir comillas alrededor del símbolo
-                                `<button class="action-btn btn-edit" onclick="buy('${symbol1}', ${asset.quantity})">Buy More</button>` +
-                                `<button class="action-btn btn-sell" onclick="sell('${symbol1}', ${asset.quantity})">Sell</button>` +
+                                `<button class="action-btn btn-edit" onclick="buy('${symbol1}')">Buy More</button>` +
+                                `<button class="action-btn btn-sell" onclick="sell('${symbol1}')">Sell</button>` +
                             '</td>' +
                         '</tr>';
                 }
@@ -1483,6 +1398,15 @@
                         '</div>'
                     ) +
                 '</div>';
+        }
+
+        // Funciones para los botones
+        function sell(symbol){
+            alert("Vendiendo: " + symbol);
+        }
+
+        function buy(symbol){
+            alert("Comprando: " + symbol);
         }
 
         // Inicializar

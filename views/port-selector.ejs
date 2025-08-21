@@ -257,7 +257,8 @@
 
     <script>
         let portfolios = [];
-        const userId = 1;
+        let currentUser = <%- JSON.stringify(user || null) %>;
+        const userId = currentUser.id;
 
         async function fetchPortfolios() {
             try {
