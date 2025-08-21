@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub - Análisis Financiero</title>
+    <title>Quantia</title>
 
     <!-- Chart component -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -857,7 +857,7 @@
             <div class="div">
                 <% if (!user) { %>
         <!-- Mostrar botón de login si NO hay usuario -->
-                    <a class="login-btn" href="/login">Iniciar Sesión</a>
+                    <a class="login-btn" href="/login">Login</a>
                 <% } else { %>
         <!-- Mostrar información del usuario si está logueado -->
                 <div class="user-profile" onclick="toggleUserMenu(event)">
@@ -877,24 +877,24 @@
         <div class="menu-items">
             <div class="menu-item" onclick="handleMenuClick('profile')">
                 <span>👤</span>
-                Ver Perfil
+                Profile
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('settings')">
                 <span>⚙️</span>
-                Configuración
+                Config
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('help')">
                 <span>❓</span>
-                Ayuda
+                Help
             </div>
             
             <div class="menu-divider"></div>
             
             <div class="menu-item logout" onclick="handleMenuClick('logout')">
                 <span>🚪</span>
-                Cerrar Sesión
+                Log out
             </div>
         </div>
     </div>
@@ -909,22 +909,22 @@
 
     <main class="main-container">
         <section class="hero-section">
-            <h1 class="hero-title">Análisis Financiero Inteligente</h1>
-            <p class="hero-subtitle">Explora mercados, analiza tendencias y toma decisiones informadas</p>
+            <h1 class="hero-title">Intelligent Financial Analysis</h1>
+            <p class="hero-subtitle">Explore markets, analyze trends, and make informed decisions</p>
             <div class="search-container">
-                <input type="text" class="search-box" placeholder="Buscar activos..." id="searchInput">
+                <input type="text" class="search-box" placeholder="Searching assets..." id="searchInput">
                 <div class="search-icon">🔍</div>
                 <div class="search-results" id="searchResults"></div>
             </div>
         </section>
 
-        <div class="categories">
+        <!-- <div class="categories">
             <button class="category-btn active" onclick="filterAssets('all')">Todos</button>
             <button class="category-btn" onclick="filterAssets('stocks')">Acciones</button>
             <button class="category-btn" onclick="filterAssets('crypto')">Criptomonedas</button>
             <button class="category-btn" onclick="filterAssets('etf')">ETFs</button>
             <button class="category-btn" onclick="filterAssets('forex')">Divisas</button>
-        </div>
+        </div> -->
 
         <section class="market-overview">
             <div class="market-card" onclick="openAsset('AAPL')">
@@ -933,7 +933,7 @@
                 <div class="market-change positive">+2.45 (+1.42%)</div>
             </div>
             
-            <div class="market-card" onclick="openAsset('GOOGL')">
+            <div class="market-card" onclick="openAsset('Alphabet')">
                 <h3>Alphabet Inc.</h3>
                 <div class="market-price">$2,847.91</div>
                 <div class="market-change negative">-15.67 (-0.55%)</div>
@@ -981,7 +981,7 @@
 
         <div class="market-trends-and-recommendations">           
             <section class="trending-section">
-                <h2 class="section-title">Tendencias del Mercado</h2>
+                <h2 class="section-title">Today Price</h2>
                 <div class="minichart-container">
                     <div class="minichart-header">
                         <div class="stock-info">
@@ -994,66 +994,66 @@
                         </div>
                     </div>
                     <div class="chart-container" id="chartContainer">
-                        <div class="loading">Cargando datos iniciales...</div>
+                        <div class="loading">Loading...</div>
                     </div>
                     <div class="minichart-footer">
-                        Última actualización: <span id="lastUpdate">-</span>
-                        <div class="refresh-info">Próxima actualización en <span id="countdown">60</span> segundos</div>
+                        Last update: <span id="lastUpdate">-</span>
+                        <div class="refresh-info">Next update in <span id="countdown">60</span> segundos</div>
                     </div>
                 </div>
             </section> 
         
             <section class="recommendations-section">
-                <h2 class="section-title">Top 10 Recomendaciones</h2>
+                <h2 class="section-title">Top 10 Recommendations</h2>
                 <div class="recommendations-list" id="recommendationsList">
-                    <p style="color: rgba(255,255,255,0.6)">Cargando recomendaciones...</p>
+                    <p style="color: rgba(255,255,255,0.6)">Loading recommendations...</p>
                 </div>
             </section>
         </div>
 
         <section class="news-section">
-            <h2 class="section-title">Noticias Financieras</h2>
+            <h2 class="section-title">Financial News</h2>
             <div class="news-controls">
                 <div class="news-filters">
                     <div class="filter-group">
-                        <label for="categorySelect">📂 Categoría:</label>
+                        <label for="categorySelect">📂 Category:</label>
                         <select id="categorySelect" class="news-select" onchange="handleFilterChange()">
                             <option value="general">General</option>
-                            <option value="markets">Mercados</option>
-                            <option value="economy">Economía</option>
-                            <option value="business">Negocios</option>
-                            <option value="crypto">Criptomonedas</option>
-                            <option value="stocks">Acciones</option>
-                            <option value="forex">Divisas</option>
+                            <option value="markets">Market</option>
+                            <option value="economy">Economy</option>
+                            <option value="business">Business</option>
+                            <option value="crypto">Cryptos</option>
+                            <option value="stocks">Stocks</option>
+                            <option value="forex">Foreign exchange</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="countSelect">🔢 Cantidad:</label>
+                        <label for="countSelect">🔢 Quantity:</label>
                         <select id="countSelect" class="news-select" onchange="handleFilterChange()">
-                            <option value="5">5 noticias</option>
-                            <option value="10" selected>10 noticias</option>
-                            <option value="15">15 noticias</option>
-                            <option value="20">20 noticias</option>
-                            <option value="25">25 noticias</option>
+                            <option value="5">5 news</option>
+                            <option value="10" selected>10 news</option>
+                            <option value="15">15 news</option>
+                            <option value="20">20 news</option>
+                            <option value="25">25 news</option>
                         </select>
                     </div>
                     
                     <div class="filter-group">
-                        <label for="regionSelect">🌍 Región:</label>
+                        <label for="regionSelect">🌍 Region:</label>
                         <select id="regionSelect" class="news-select" onchange="handleFilterChange()">
-                            <option value="USA" selected>Estados Unidos</option>
-                            <option value="EUROPE">Europa</option>
-                            <option value="ASIA">Asia</option>
-                            <option value="LATAM">Latinoamérica</option>
-                            <option value="GLOBAL">Global</option>
+                            <option value="USA" selected>USA</option>
+                            <option value="EUROPE">EUROPE</option>
+                            <option value="ASIA">ASIA</option>
+                            <option value="LATAM">LATAM</option>
+                            <option value="GLOBAL">GLOBAL</option>
                         </select>
                     </div>
                     
-                    <button class="news-refresh-btn" onclick="refreshNews()">🔄 Actualizar</button>
+                    <button class="news-refresh-btn" onclick="refreshNews()">🔄 Refresh</button>
                 </div>
                 
-                <div class="news-status" id="newsStatus">Cargando noticias...</div>
+                <div class="news-status" id="newsStatus">Loading news...</div>
             </div>
             <div class="news-grid" id="newsContainer">
                 <!-- Las noticias se cargarán aquí dinámicamente -->
@@ -1165,7 +1165,7 @@
 
         async function selectResult(symbol) {
             // Redirige a indice4.html con el símbolo en el query param
-            window.location.href = `indice4.html?symbol=${encodeURIComponent(symbol)}`;
+            window.location.href = `/analyse/historic?symbol=${encodeURIComponent(symbol)}`;
         }
 
         // Funcionalidad de noticias
@@ -1390,7 +1390,7 @@
         // Funcionalidad para abrir detalles de activo
         function openAsset(symbol) {
             console.log(`Abriendo detalles para: ${symbol}`);
-            alert(`Próximamente: Vista detallada de ${symbol} con gráficos, análisis técnico y noticias.`);
+            // alert(`Próximamente: Vista detallada de ${symbol} con gráficos, análisis técnico y noticias.`);
         }
 
         // Animaciones y efectos adicionales
@@ -1483,7 +1483,7 @@ function handleMenuClick(action) {
             window.location.href = '/help';
             break;
         case 'logout':
-            if(confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+            if(confirm('Are you sure you want to log out?')) {
                 // Hacer logout
                 window.location.href = '/logout';
             }
@@ -1547,14 +1547,14 @@ document.addEventListener('click', function(event) {
                         <p style="color:${outperf >= 0 ? '#00ff88':'#ff4757'}">
                             🚀 Outperformance: $${outperf.toFixed(2)}
                         </p>
-                        <p style="font-size:12px; opacity:0.8">Última actualización: ${data.as_of}</p>
+                        <p style="font-size:12px; opacity:0.8">Last update: ${data.as_of}</p>
                     `;
                     document.querySelector(".recommendations-section").appendChild(info);
                 }
         
             } catch (error) {
                 console.error("Error cargando recomendaciones:", error);
-                list.innerHTML = "<li class='recommendation-item'>❌ Error al cargar las recomendaciones</li>";
+                list.innerHTML = "<li class='recommendation-item'>❌ Error loading recommendations</li>";
             }
         }
         

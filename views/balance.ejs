@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHub - Depósitos y Retiros</title>
+    <title>FinanceHub - Deposits and Withdrawals</title>
     <style>
         * {
             margin: 0;
@@ -447,44 +447,44 @@
                     <li><a href="/market">Market</a></li>
                     <li><a href="/balance" class="active">Balance</a></li>
                     <li><a href="/port-selector">Portfolio</a></li>
-                    <li><a href="/analyse">Analyse</a></li>
+                    <li><a href="/analyse">Analyze</a></li>
                 </ul>
             </nav>
 <div class="user-profile" onclick="toggleUserMenu(event)">
     <div class="user-avatar" id="userAvatar">
         <%= user.username ? user.username.substring(0, 2).toUpperCase() : 'US' %>
     </div>
-    <span id="usernameDisplay"><%= user.username || 'Usuario' %></span>
+    <span id="usernameDisplay"><%= user.username || 'User' %></span>
     
-    <!-- Menú desplegable -->
+    <!-- Dropdown menu -->
     <div class="dropdown-menu" id="userDropdown">
         <div class="menu-header">
             <div class="avatar"><%= user.username ? user.username.substring(0, 2).toUpperCase() : 'US' %></div>
-            <h3><%= user.username || 'Usuario' %></h3>
-            <p><%= user.email || 'usuario@email.com' %></p>
+            <h3><%= user.username || 'User' %></h3>
+            <p><%= user.email || 'user@email.com' %></p>
         </div>
         
         <div class="menu-items">
             <div class="menu-item" onclick="handleMenuClick('profile')">
                 <span>👤</span>
-                Ver Perfil
+                View Profile
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('settings')">
                 <span>⚙️</span>
-                Configuración
+                Settings
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('help')">
                 <span>❓</span>
-                Ayuda
+                Help
             </div>
             
             <div class="menu-divider"></div>
             
             <div class="menu-item logout" onclick="handleMenuClick('logout')">
                 <span>🚪</span>
-                Cerrar Sesión
+                Log Out
             </div>
         </div>
     </div>
@@ -493,29 +493,29 @@
     </header>
 
     <main class="main-container">
-        <h1 class="page-title">Gestión de Cuenta</h1>
-        <p class="page-subtitle">Realiza depósitos y retiros de tu cuenta de inversión</p>
+        <h1 class="page-title">Account Management</h1>
+        <p class="page-subtitle">Make deposits and withdrawals from your investment account</p>
 
-        <!-- Sección de saldos -->
+        <!-- Balance section -->
         <section class="balance-section">
             <div class="balance-card">
-                <div class="balance-label">Saldo Disponible</div>
+                <div class="balance-label">Available Balance</div>
                 <div class="balance-amount neutral" id="balanceAmount">$0.00</div>
-                <div class="balance-change neutral" id="balanceStatus">Cargando...</div>
+                <div class="balance-change neutral" id="balanceStatus">Loading...</div>
             </div>
         </section>
 
-        <!-- Sección de transacciones -->
+        <!-- Transactions section -->
         <section class="transaction-section">
-            <!-- Depositar -->
+            <!-- Deposit -->
             <div class="transaction-card">
                 <div class="transaction-title">
                     <div class="transaction-icon deposit-icon">💰</div>
-                    Depositar Fondos
+                    Deposit Funds
                 </div>
                 <form id="depositForm">
                     <div class="form-group">
-                        <label class="form-label" for="depositAmount">Cantidad a depositar</label>
+                        <label class="form-label" for="depositAmount">Amount to deposit</label>
                         <input type="number" id="depositAmount" class="form-input" placeholder="$0.00" min="1" step="0.01">
                         <div class="amount-shortcuts">
                             <button type="button" class="amount-btn" onclick="setAmount('deposit', 1000)">$1,000</button>
@@ -525,146 +525,143 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="depositMethod">Método de pago</label>
+                        <label class="form-label" for="depositMethod">Payment method</label>
                         <select id="depositMethod" class="form-select">
-                            <option value="">Seleccionar método</option>
-                            <option value="bank">Transferencia bancaria</option>
-                            <option value="card">Tarjeta de débito</option>
-                            <option value="crypto">Criptomoneda</option>
+                            <option value="">Select method</option>
+                            <option value="bank">Bank transfer</option>
+                            <option value="card">Debit card</option>
+                            <option value="crypto">Cryptocurrency</option>
                             <option value="paypal">PayPal</option>
                         </select>
                     </div>
-                    <button type="submit" class="transaction-btn deposit-btn" id="depositBtn">Depositar Fondos</button>
+                    <button type="submit" class="transaction-btn deposit-btn" id="depositBtn">Deposit Funds</button>
                 </form>
             </div>
 
-            <!-- Retirar -->
+            <!-- Withdraw -->
             <div class="transaction-card">
                 <div class="transaction-title">
                     <div class="transaction-icon withdraw-icon">💸</div>
-                    Retirar Fondos
+                    Withdraw Funds
                 </div>
                 <form id="withdrawForm">
                     <div class="form-group">
-                        <label class="form-label" for="withdrawAmount">Cantidad a retirar</label>
+                        <label class="form-label" for="withdrawAmount">Amount to withdraw</label>
                         <input type="number" id="withdrawAmount" class="form-input" placeholder="$0.00" min="1" step="0.01">
                         <div class="amount-shortcuts">
                             <button type="button" class="amount-btn" onclick="setAmount('withdraw', 1000)">$1,000</button>
                             <button type="button" class="amount-btn" onclick="setAmount('withdraw', 5000)">$5,000</button>
                             <button type="button" class="amount-btn" onclick="setAmount('withdraw', 10000)">$10,000</button>
-                            <button type="button" class="amount-btn" onclick="setMaxWithdraw()">Todo</button>
+                            <button type="button" class="amount-btn" onclick="setMaxWithdraw()">All</button>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label" for="withdrawMethod">Método de retiro</label>
+                        <label class="form-label" for="withdrawMethod">Withdrawal method</label>
                         <select id="withdrawMethod" class="form-select">
-                            <option value="">Seleccionar método</option>
-                            <option value="bank">Transferencia bancaria</option>
-                            <option value="crypto">Criptomoneda</option>
+                            <option value="">Select method</option>
+                            <option value="bank">Bank transfer</option>
+                            <option value="crypto">Cryptocurrency</option>
                             <option value="paypal">PayPal</option>
                         </select>
                     </div>
-                    <button type="submit" class="transaction-btn withdraw-btn" id="withdrawBtn">Retirar Fondos</button>
+                    <button type="submit" class="transaction-btn withdraw-btn" id="withdrawBtn">Withdraw Funds</button>
                 </form>
             </div>
         </section>
 
-        <!-- Transacciones recientes -->
+        <!-- Recent transactions -->
         <section class="recent-transactions">
-            <h2 class="section-title">Transacciones Recientes</h2>
+            <h2 class="section-title">Recent Transactions</h2>
             <div class="transaction-list" id="transactionList">
-                <!-- Las transacciones se cargarán dinámicamente aquí -->
+                <!-- Transactions will be loaded dynamically here -->
             </div>
         </section>
     </main>
 
     <script>
-        // Variables globales
+        // Global variables
         let currentUser = <%- JSON.stringify(user || null) %>;
         console.log(currentUser);
         let currentBalance = 0;
         let transactions = [];
 
-        // Inicialización al cargar la página
+        // Initialization when page loads
         document.addEventListener('DOMContentLoaded', async () => {
-            // Simular usuario logueado (en una app real esto vendría de la sesión
+            // Simulate logged in user (in a real app this would come from the session)
             
-            // Cargar datos del usuario
+            // Load user data
             await loadUserData();
             
-            // Configurar event listeners
+            // Set up event listeners
             setupEventListeners();
         });
 
         async function loadUserData() {
     try {
-        // Cargar datos del usuario
+        // Load user data
         const [userResponse, transactionsResponse] = await Promise.all([
             fetch(`/db/user/${currentUser.id}`),
             fetch(`/db/transactions/${currentUser.id}?limit=10`)
         ]);
 
         if (!userResponse.ok || !transactionsResponse.ok) {
-            throw new Error(userResponse.ok ? 'Error al cargar transacciones' : 'Error al cargar datos del usuario');
+            throw new Error(userResponse.ok ? 'Error loading transactions' : 'Error loading user data');
         }
 
         const userData = await userResponse.json();
         const transactionsData = await transactionsResponse.json();
 
-
         currentBalance = parseFloat(userData.data?.balance) || 0;
         transactions = transactionsData.data || [];
 
-        // Actualizar UI
+        // Update UI
         document.getElementById('balanceAmount').textContent = `$${currentBalance.toFixed(2)}`;
-        document.getElementById('balanceStatus').textContent = currentBalance > 0 ? 'Listo para invertir' : 'Sin fondos disponibles';
+        document.getElementById('balanceStatus').textContent = currentBalance > 0 ? 'Ready to invest' : 'No funds available';
         renderTransactions();
 
     } catch (error) {
         console.error('Error:', error);
-        document.getElementById('balanceStatus').textContent = 'Error al cargar datos';
+        document.getElementById('balanceStatus').textContent = 'Error loading data';
         document.getElementById('transactionList').innerHTML = `
             <p style="color: #ff4757; text-align: center;">
-                Error al cargar transacciones: ${error.message}
+                Error loading transactions: ${error.message}
             </p>
         `;
     }
 }
 
-
 function formatMySQLDate(mysqlDate) {
-    if (!mysqlDate) return 'Fecha no disponible';
+    if (!mysqlDate) return 'Date not available';
     
-    // Reemplazar espacio por 'T' y agregar 'Z' para zona horaria UTC
+    // Replace space with 'T' and add 'Z' for UTC timezone
     const isoDate = mysqlDate.replace(' ', 'T') + 'Z';
     const date = new Date(isoDate);
     
     if (isNaN(date.getTime())) {
-        console.error('Fecha inválida:', mysqlDate);
-        return 'Fecha inválida';
+        console.error('Invalid date:', mysqlDate);
+        return 'Invalid date';
     }
     
-    // Opciones de formato para español
+    // Format options for English
     const options = {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        timeZone: 'UTC' // Opcional: mantener en UTC o usar Intl para conversión automática
+        timeZone: 'UTC' // Optional: keep in UTC or use Intl for automatic conversion
     };
     
-    return date.toLocaleString('es-ES', options);
+    return date.toLocaleString('en-US', options);
 }
 
-
-        // Renderizar transacciones
+        // Render transactions
         function renderTransactions() {
             const container = document.getElementById('transactionList');
             container.innerHTML = '';
             
             if (transactions.length === 0) {
-                container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No hay transacciones recientes</p>';
+                container.innerHTML = '<p style="color: rgba(255,255,255,0.5); text-align: center;">No recent transactions</p>';
                 return;
             }
             
@@ -681,7 +678,7 @@ function formatMySQLDate(mysqlDate) {
                             ${isDeposit ? '↗️' : '↙️'}
                         </div>
                         <div class="transaction-details">
-                            <h4>${isDeposit ? 'Depósito' : 'Retiro'} - ${getMethodName(transaction.description)}</h4>
+                            <h4>${isDeposit ? 'Deposit' : 'Withdrawal'} - ${getMethodName(transaction.description)}</h4>
                             <p>${transaction.description}</p>
                         </div>
                     </div>
@@ -699,31 +696,31 @@ function formatMySQLDate(mysqlDate) {
             });
         }
 
-        // Configurar event listeners
+        // Set up event listeners
         function setupEventListeners() {
-            // Formulario de depósito
+            // Deposit form
             document.getElementById('depositForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const amount = parseFloat(document.getElementById('depositAmount').value);
                 const method = document.getElementById('depositMethod').value;
                 
                 if (!amount || !method) {
-                    alert('Por favor completa todos los campos');
+                    alert('Please complete all fields');
                     return;
                 }
                 
                 if (amount < 1) {
-                    alert('El monto mínimo es $1.00');
+                    alert('Minimum amount is $1.00');
                     return;
                 }
                 
                 try {
-                    // Deshabilitar botón durante el procesamiento
+                    // Disable button during processing
                     const depositBtn = document.getElementById('depositBtn');
                     depositBtn.disabled = true;
-                    depositBtn.textContent = 'Procesando...';
+                    depositBtn.textContent = 'Processing...';
                     
-                    // Enviar solicitud al endpoint
+                    // Send request to endpoint
                     const response = await fetch('/db/deposit', {
                         method: 'POST',
                         headers: {
@@ -732,59 +729,59 @@ function formatMySQLDate(mysqlDate) {
                         body: JSON.stringify({
                             userId: currentUser.id,
                             amount: amount,
-                            description: `Depósito via ${method}`
+                            description: `Deposit via ${method}`
                         })
                     });
                     
-                    if (!response.ok) throw new Error('Error en el depósito');
+                    if (!response.ok) throw new Error('Deposit error');
                     
                     const result = await response.json();
                     
-                    // Actualizar UI
+                    // Update UI
                     await loadUserData();
-                    alert(`Depósito de $${amount.toFixed(2)} realizado con éxito`);
+                    alert(`Deposit of $${amount.toFixed(2)} successful`);
                     
-                    // Resetear formulario
+                    // Reset form
                     document.getElementById('depositForm').reset();
                     
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(`Error al procesar depósito: ${error.message}`);
+                    alert(`Error processing deposit: ${error.message}`);
                 } finally {
                     const depositBtn = document.getElementById('depositBtn');
                     depositBtn.disabled = false;
-                    depositBtn.textContent = 'Depositar Fondos';
+                    depositBtn.textContent = 'Deposit Funds';
                 }
             });
             
-            // Formulario de retiro
+            // Withdrawal form
             document.getElementById('withdrawForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const amount = parseFloat(document.getElementById('withdrawAmount').value);
                 const method = document.getElementById('withdrawMethod').value;
                 
                 if (!amount || !method) {
-                    alert('Por favor completa todos los campos');
+                    alert('Please complete all fields');
                     return;
                 }
                 
                 if (amount < 1) {
-                    alert('El monto mínimo es $1.00');
+                    alert('Minimum amount is $1.00');
                     return;
                 }
                 
                 if (amount > currentBalance) {
-                    alert(`No tienes suficientes fondos disponibles. Máximo: $${currentBalance.toFixed(2)}`);
+                    alert(`Insufficient funds. Maximum: $${currentBalance.toFixed(2)}`);
                     return;
                 }
                 
                 try {
-                    // Deshabilitar botón durante el procesamiento
+                    // Disable button during processing
                     const withdrawBtn = document.getElementById('withdrawBtn');
                     withdrawBtn.disabled = true;
-                    withdrawBtn.textContent = 'Procesando...';
+                    withdrawBtn.textContent = 'Processing...';
                     
-                    // Enviar solicitud al endpoint
+                    // Send request to endpoint
                     const response = await fetch('/db/withdrawal', {
                         method: 'POST',
                         headers: {
@@ -793,32 +790,32 @@ function formatMySQLDate(mysqlDate) {
                         body: JSON.stringify({
                             userId: currentUser.id,
                             amount: amount,
-                            description: `Retiro via ${method}`
+                            description: `Withdrawal via ${method}`
                         })
                     });
                     
-                    if (!response.ok) throw new Error('Error en el retiro');
+                    if (!response.ok) throw new Error('Withdrawal error');
                     
                     const result = await response.json();
                     
-                    // Actualizar UI
+                    // Update UI
                     await loadUserData();
-                    alert(`Retiro de $${amount.toFixed(2)} realizado con éxito`);
+                    alert(`Withdrawal of $${amount.toFixed(2)} successful`);
                     
-                    // Resetear formulario
+                    // Reset form
                     document.getElementById('withdrawForm').reset();
                     
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(`Error al procesar retiro: ${error.message}`);
+                    alert(`Error processing withdrawal: ${error.message}`);
                 } finally {
                     const withdrawBtn = document.getElementById('withdrawBtn');
                     withdrawBtn.disabled = false;
-                    withdrawBtn.textContent = 'Retirar Fondos';
+                    withdrawBtn.textContent = 'Withdraw Funds';
                 }
             });
             
-            // Validación en tiempo real para retiros
+            // Real-time validation for withdrawals
             document.getElementById('withdrawAmount').addEventListener('input', function(e) {
                 const currentAmount = parseFloat(e.target.value) || 0;
                 const submitBtn = document.getElementById('withdrawBtn');
@@ -826,11 +823,11 @@ function formatMySQLDate(mysqlDate) {
                 if (currentAmount > currentBalance) {
                     e.target.style.borderColor = '#ff4757';
                     submitBtn.disabled = true;
-                    submitBtn.textContent = 'Fondos insuficientes';
+                    submitBtn.textContent = 'Insufficient funds';
                 } else {
                     e.target.style.borderColor = 'rgba(255, 255, 255, 0.15)';
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Retirar Fondos';
+                    submitBtn.textContent = 'Withdraw Funds';
                 }
             });
         }
@@ -849,18 +846,18 @@ function formatMySQLDate(mysqlDate) {
         }
 
         function getMethodName(description) {
-            if (description.includes('bank')) return 'Transferencia bancaria';
-            if (description.includes('card')) return 'Tarjeta de débito';
-            if (description.includes('crypto')) return 'Criptomoneda';
+            if (description.includes('bank')) return 'Bank transfer';
+            if (description.includes('card')) return 'Debit card';
+            if (description.includes('crypto')) return 'Cryptocurrency';
             if (description.includes('paypal')) return 'PayPal';
-            return description || 'Otro método';
+            return description || 'Other method';
         }
 
         function getStatusName(status) {
             const statusMap = {
-                'completed': 'Completado',
-                'pending': 'Pendiente',
-                'failed': 'Fallido'
+                'completed': 'Completed',
+                'pending': 'Pending',
+                'failed': 'Failed'
             };
             return statusMap[status] || status;
         }

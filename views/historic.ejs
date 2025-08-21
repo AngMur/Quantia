@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Gráfica de Velas - Datos de IBM</title>
+  <title>Candlestick Chart - IBM Data</title>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="/styles/login-register.css">
   <style>
-            /* Tus estilos actuales */
+            /* Your current styles */
         .header {
             width: 100%;
             background: rgba(60, 57, 94, 0.827);
@@ -136,7 +136,7 @@
             font-size: 14px;
         }
 
-        /* Boton desplazable */
+        /* Sliding button */
                 .menu-item {
             padding: 12px 20px;
             cursor: pointer;
@@ -548,44 +548,36 @@
       <header class="header">
         <div class="nav-container">
         <div class="logo"><a href="/">Quantia</a></div>
-        <div class="search-container">
-                <input type="text" class="search-box" placeholder="Search stocks..." id="searchInput">
-                <div class="search-icon">🔍</div>
-                <div class="search-results" id="searchResults"></div>
-            </div>
-        </div>
-        <div class="menu-item" id="accessibilityToggle">
-            <span>Daltonic Mode</span>
-        <div class="toggle-switch" id="accessibilitySwitch"></div>
-        </div>
+        
+        
     </header>
 
     
-    <!-- Modal para seleccionar portafolio -->
+    <!-- Modal for portfolio selection -->
     <div class="modal-overlay" id="portfolioModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title">Seleccionar Portafolio</h2>
+                <h2 class="modal-title">Select Portfolio</h2>
                 <button class="modal-close" id="closeModal">&times;</button>
             </div>
             
             <div class="modal-body">
                 <ul class="portfolio-list" id="portfolioList">
-                    <!-- Los portafolios se cargarán aquí con JavaScript -->
+                    <!-- Portfolios will be loaded here with JavaScript -->
                 </ul>
             </div>
             
             <div class="modal-footer">
-                <button class="btn btn-cancel" id="cancelSelection">Cancelar</button>
-                <button class="btn btn-confirm" id="confirmSelection" disabled>Confirmar</button>
+                <button class="btn btn-cancel" id="cancelSelection">Cancel</button>
+                <button class="btn btn-confirm" id="confirmSelection" disabled>Confirm</button>
             </div>
         </div>
     </div>
 
   <div class="container">
     <div class="title-container">
-      <h2>Analasis historico</h2>
-      <div class="symbol-info" id="symbolInfo">Cargando datos...</div>
+      <h2>Historical Analysis</h2>
+      <div class="symbol-info" id="symbolInfo">Loading data...</div>
       <div id="marketInfo" class="market-info"></div>
         <button class="buy-btn" id="openPortfolioModal">Buy</button>
 
@@ -593,29 +585,29 @@
 
     <div class="controls">
       <div class="time-filters">
-        <button class="time-btn" data-days="1">1 Día</button>
-        <button class="time-btn" data-days="5">5 Días</button>
-        <button class="time-btn active" data-days="30">1 Mes</button>
-        <button class="time-btn" data-days="365">1 Año</button>
-        <button class="time-btn" data-days="max">Máximo</button>
+        <button class="time-btn" data-days="1">1 Day</button>
+        <button class="time-btn" data-days="5">5 Days</button>
+        <button class="time-btn active" data-days="30">1 Month</button>
+        <button class="time-btn" data-days="365">1 Year</button>
+        <button class="time-btn" data-days="max">Maximum</button>
       </div>
       
       <div class="chart-type">
-        <button class="chart-btn" data-type="candlestick">Velas</button>
-        <button class="chart-btn active" data-type="line">Lineal</button>
+        <button class="chart-btn" data-type="candlestick">Candles</button>
+        <button class="chart-btn active" data-type="line">Line</button>
       </div>
     </div>
 
     <div id="chart">
-      <div class="loading">Cargando datos...</div>
+      <div class="loading">Loading data...</div>
     </div>
 
     <div class="stats" id="statsContainer">
-      <!-- Las estadísticas se generarán dinámicamente -->
+      <!-- Statistics will be generated dynamically -->
     </div>
 
     <div class="footer">
-      <p>Gráfico de velas - Datos históricos de precios | Actualizado: <span id="updateDate"></span></p>
+      <p>Candlestick Chart - Historical price data | Updated: <span id="updateDate"></span></p>
     </div>
   </div>
 
@@ -625,86 +617,86 @@
     let currentRange = '30';
     let chartType = 'line';
     const stockSymbol = '<%= stock %>';
-    let modoDaltonico = false;
+    let colorBlindMode = false;
     
 
-    // Establecer fecha de actualización
-    document.getElementById('updateDate').textContent = new Date().toLocaleDateString('es-ES', {
+    // Set update date
+    document.getElementById('updateDate').textContent = new Date().toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
 
-    // Cargar datos históricos de la API
+    // Load historical data from API
     fetch(`/api/historical/${stockSymbol}`)
       .then(response => {
         if (!response.ok) {
-          throw new Error('Error en la respuesta de la API: ' + response.status);
+          throw new Error('API response error: ' + response.status);
         }
         return response.json();
       })
       .then(data => {
-        // Eliminar mensaje de carga
+        // Remove loading message
         document.querySelector('#chart').innerHTML = '';
         
-        // Guardar todos los datos
+        // Save all data
         allData = data.ohlc;
         
-        // Cargar datos del día actual por defecto
+        // Load current day data by default
         filterHistoricalData(currentRange);
         
-        // Actualizar la información del símbolo
-        document.getElementById('symbolInfo').textContent = `Símbolo: ${data.symbol} | ${allData.length} períodos de datos`;
+        // Update symbol information
+        document.getElementById('symbolInfo').textContent = `Symbol: ${data.symbol} | ${allData.length} data periods`;
       })
       .catch(err => {
-        console.error("Error cargando datos históricos:", err);
+        console.error("Error loading historical data:", err);
         document.querySelector('#chart').innerHTML = 
-          `<div class="error">Error al cargar los datos: ${err.message}. Asegúrate de que la API está ejecutándose en localhost:5000</div>`;
+          `<div class="error">Error loading data: ${err.message}. Make sure the API is running on localhost:5000</div>`;
       });
 
-    // Añadir event listeners a los botones de rango temporal
+    // Add event listeners to time range buttons
     document.querySelectorAll('.time-btn').forEach(button => {
       button.addEventListener('click', function() {
-        // Remover clase active de todos los botones
+        // Remove active class from all buttons
         document.querySelectorAll('.time-btn').forEach(btn => {
           btn.classList.remove('active');
           btn.classList.remove('loading');
         });
         
-        // Añadir clase active al botón clickeado
+        // Add active class to clicked button
         this.classList.add('active');
         
-        // Obtener el rango seleccionado
+        // Get selected range
         const range = this.getAttribute('data-days');
         currentRange = range;
         
-        // Si es 1 día, cargar datos en tiempo real
+        // If it's 1 day, load real-time data
         if (range === '1') {
           this.classList.add('loading');
           loadTodayData();
         } else {
-          // Para otros rangos, usar datos históricos
+          // For other ranges, use historical data
           filterHistoricalData(range);
         }
       });
     });
 
-    // Añadir event listeners a los botones de tipo de gráfico
+    // Add event listeners to chart type buttons
     document.querySelectorAll('.chart-btn').forEach(button => {
       button.addEventListener('click', function() {
-        // Remover clase active de todos los botones
+        // Remove active class from all buttons
         document.querySelectorAll('.chart-btn').forEach(btn => {
           btn.classList.remove('active');
         });
         
-        // Añadir clase active al botón clickeado
+        // Add active class to clicked button
         this.classList.add('active');
         
-        // Obtener el tipo de gráfico seleccionado
+        // Get selected chart type
         chartType = this.getAttribute('data-type');
         
-        // Volver a renderizar el gráfico con el nuevo tipo
+        // Re-render chart with new type
         if (currentRange === '1') {
           loadTodayData();
         } else {
@@ -713,36 +705,36 @@
       });
     });
 
-    // Función para cargar datos del día actual
+    // Function to load today's data
     function loadTodayData() {
       fetch(`/api/today/${stockSymbol}`)
         .then(response => {
           if (!response.ok) {
-            throw new Error('Error en la respuesta de la API: ' + response.status);
+            throw new Error('API response error: ' + response.status);
           }
           return response.json();
         })
         .then(data => {
-          // Quitar estado de carga del botón
+          // Remove loading state from button
           const loadingBtn = document.querySelector('.time-btn.loading');
           if (loadingBtn) loadingBtn.classList.remove('loading');
           
-          // Mostrar información del mercado
+          // Show market information
           document.getElementById('marketInfo').innerHTML = `
-            Mercado abierto: ${new Date(data.marketOpen).toLocaleDateString('es-ES')} | 
-            Última actualización: ${new Date(data.lastUpdate).toLocaleTimeString('es-ES')} |
-            Intervalo: ${data.interval}
+            Market open: ${new Date(data.marketOpen).toLocaleDateString('en-US')} | 
+            Last update: ${new Date(data.lastUpdate).toLocaleTimeString('en-US')} |
+            Interval: ${data.interval}
           `;
           
-          // Verificar si hay datos
+          // Check if there is data
           if (!data.dataPoints || data.dataPoints.length === 0) {
             document.querySelector('#chart').innerHTML = 
-              '<div class="error">No hay datos disponibles para hoy</div>';
+              '<div class="error">No data available for today</div>';
             document.getElementById('statsContainer').innerHTML = '';
             return;
           }
           
-          // Convertir dataPoints a formato OHLC
+          // Convert dataPoints to OHLC format
           const ohlcData = data.dataPoints.map(point => {
             return {
               date: point.date,
@@ -754,20 +746,20 @@
             };
           });
           
-          // Renderizar el gráfico y estadísticas
+          // Render chart and statistics
           renderChart(ohlcData);
           updateStats(ohlcData);
         })
         .catch(err => {
-          console.error("Error cargando datos del día:", err);
+          console.error("Error loading today's data:", err);
           const loadingBtn = document.querySelector('.time-btn.loading');
           if (loadingBtn) loadingBtn.classList.remove('loading');
           document.querySelector('#chart').innerHTML = 
-            `<div class="error">Error al cargar datos del día: ${err.message}</div>`;
+            `<div class="error">Error loading today's data: ${err.message}</div>`;
         });
     }
 
-    // Función para filtrar datos históricos
+    // Function to filter historical data
     function filterHistoricalData(range) {
       let filteredData = [];
       
@@ -783,36 +775,36 @@
         });
       }
       
-      // Ocultar información del mercado para datos históricos
+      // Hide market information for historical data
       document.getElementById('marketInfo').innerHTML = '';
       
-      // Actualizar el gráfico y las estadísticas
+      // Update chart and statistics
       renderChart(filteredData);
       updateStats(filteredData);
     }
 
-    // Función para formatear números a 2 decimales
+    // Function to format numbers to 2 decimals
     function formatToTwoDecimals(value) {
       return parseFloat(value.toFixed(2));
     }
 
-    // Función para renderizar gráfica
+    // Function to render chart
     function renderChart(ohlcData) {
-      // Verificar que hay datos
+      // Check if there is data
       if (!ohlcData || ohlcData.length === 0) {
         document.querySelector('#chart').innerHTML = 
-          '<div class="error">No hay datos disponibles para el rango seleccionado</div>';
+          '<div class="error">No data available for the selected range</div>';
         return;
       }
       
-      // Ordenar los datos por fecha (más antiguo a más reciente)
+      // Sort data by date (oldest to newest)
       ohlcData.sort((a, b) => new Date(a.date) - new Date(b.date));
       
       let seriesData;
       let seriesConfig;
       
       if (chartType === 'candlestick') {
-        // Preparar datos para gráfico de velas - FORMATO CORREGIDO
+        // Prepare data for candlestick chart - CORRECTED FORMAT
         seriesData = ohlcData.map(d => {
           return {
             x: new Date(d.date),
@@ -826,12 +818,12 @@
         });
         
         seriesConfig = [{
-          name: 'Precio',
+          name: 'Price',
           type: 'candlestick',
           data: seriesData
         }];
       } else {
-        // Preparar datos para gráfico lineal (usamos el precio de cierre)
+        // Prepare data for line chart (use closing price)
         seriesData = ohlcData.map(d => {
           return {
             x: new Date(d.date),
@@ -840,7 +832,7 @@
         });
         
         seriesConfig = [{
-          name: 'Precio de Cierre',
+          name: 'Closing Price',
           type: 'line',
           data: seriesData
         }];
@@ -850,8 +842,8 @@
       const firstOpen = formatToTwoDecimals(ohlcData[0].open);
       
       const titleText = currentRange === '1' 
-        ? `IBM - Precios de hoy (${ohlcData.length} períodos)` 
-        : `IBM - Precios históricos (${ohlcData.length} períodos)`;
+        ? `IBM - Today's prices (${ohlcData.length} periods)` 
+        : `IBM - Historical prices (${ohlcData.length} periods)`;
       
       const options = {
         chart: {
@@ -873,19 +865,19 @@
             }
           },
           events: {
-            // Capturar errores en el gráfico
+            // Capture chart errors
             mounted: function(ctx, config) {
-              console.log('Gráfico montado correctamente');
+              console.log('Chart mounted correctly');
             },
             updated: function(ctx, config) {
-              console.log('Gráfico actualizado correctamente');
+              console.log('Chart updated correctly');
             },
-            // Manejar errores
+            // Handle errors
             error: function(err) {
-              console.error('Error en el gráfico:', err);
+              console.error('Chart error:', err);
               document.querySelector('#chart').innerHTML = 
-                '<div class="error">Error al renderizar el gráfico. Intentando con gráfico lineal...</div>';
-              // Intentar con gráfico lineal como fallback
+                '<div class="error">Error rendering chart. Trying with line chart...</div>';
+              // Try with line chart as fallback
               if (chartType === 'candlestick') {
                 chartType = 'line';
                 document.querySelector('.chart-btn[data-type="line"]').click();
@@ -936,22 +928,22 @@
           y: {
             formatter: function(value, { seriesIndex, dataPointIndex, w }) {
               if (chartType === 'candlestick') {
-                // Verificar que los datos existen antes de acceder a ellos
+                // Verify data exists before accessing it
                 if (w && w.config && w.config.series && w.config.series[seriesIndex] && 
                     w.config.series[seriesIndex].data && w.config.series[seriesIndex].data[dataPointIndex] &&
                     w.config.series[seriesIndex].data[dataPointIndex].y) {
                   const points = w.config.series[seriesIndex].data[dataPointIndex].y;
                   return `
-                    <div class="tooltip-value">Apertura: $${points[0].toFixed(2)}</div>
-                    <div class="tooltip-value">Máximo: $${points[1].toFixed(2)}</div>
-                    <div class="tooltip-value">Mínimo: $${points[2].toFixed(2)}</div>
-                    <div class="tooltip-value">Cierre: $${points[3].toFixed(2)}</div>
+                    <div class="tooltip-value">Open: $${points[0].toFixed(2)}</div>
+                    <div class="tooltip-value">High: $${points[1].toFixed(2)}</div>
+                    <div class="tooltip-value">Low: $${points[2].toFixed(2)}</div>
+                    <div class="tooltip-value">Close: $${points[3].toFixed(2)}</div>
                   `;
                 } else {
-                  return `<div class="tooltip-value">Cierre: $${value.toFixed(2)}</div>`;
+                  return `<div class="tooltip-value">Close: $${value.toFixed(2)}</div>`;
                 }
               } else {
-                return `<div class="tooltip-value">Cierre: $${value.toFixed(2)}</div>`;
+                return `<div class="tooltip-value">Close: $${value.toFixed(2)}</div>`;
               }
             }
           }
@@ -966,7 +958,7 @@
           }
         },
         noData: {
-          text: 'No hay datos disponibles',
+          text: 'No data available',
           align: 'center',
           verticalAlign: 'middle',
           offsetX: 0,
@@ -1000,7 +992,7 @@
           }
         },
         series: [{
-          name: 'Precio',
+          name: 'Price',
           data: seriesData
         }],
         xaxis: {
@@ -1026,8 +1018,8 @@
         plotOptions: {
           candlestick: {
             colors: {
-              upward: modoDaltonico == true ? 'red' : '#27ae60' , // Ganancias
-              downward: modoDaltonico == true ? 'black' : '#c0392b' //Perdidas
+              upward: colorBlindMode == true ? 'red' : '#27ae60' , // Gains
+              downward: colorBlindMode == true ? 'black' : '#c0392b' // Losses
             },
             wick: {
               useFillColor: true
@@ -1042,10 +1034,10 @@
             formatter: function(value, { seriesIndex, dataPointIndex, w }) {
               const points = w.config.series[seriesIndex].data[dataPointIndex].y;
               return `
-                <div class="tooltip-value">Apertura: $${points[0].toFixed(2)}</div>
-                <div class="tooltip-value">Máximo: $${points[1].toFixed(2)}</div>
-                <div class="tooltip-value">Mínimo: $${points[2].toFixed(2)}</div>
-                <div class="tooltip-value">Cierre: $${points[3].toFixed(2)}</div>
+                <div class="tooltip-value">Open: $${points[0].toFixed(2)}</div>
+                <div class="tooltip-value">High: $${points[1].toFixed(2)}</div>
+                <div class="tooltip-value">Low: $${points[2].toFixed(2)}</div>
+                <div class="tooltip-value">Close: $${points[3].toFixed(2)}</div>
               `;
             }
           }
@@ -1072,10 +1064,10 @@
           chart.render();
         }
       } catch (error) {
-        console.error('Error al renderizar el gráfico:', error);
+        console.error('Error rendering chart:', error);
         document.querySelector('#chart').innerHTML = 
-          '<div class="error">Error al renderizar el gráfico. Intentando con gráfico lineal...</div>';
-        // Intentar con gráfico lineal como fallback
+          '<div class="error">Error rendering chart. Trying with line chart...</div>';
+        // Try with line chart as fallback
         if (chartType === 'candlestick') {
           chartType = 'line';
           document.querySelector('.chart-btn[data-type="line"]').click();
@@ -1083,18 +1075,18 @@
       }
     }
     
-    // Función para actualizar las estadísticas
+    // Function to update statistics
     function updateStats(ohlcData) {
       if (!ohlcData || ohlcData.length === 0) return;
       
       const first = ohlcData[0];
       const last = ohlcData[ohlcData.length - 1];
       
-      // Calcular cambios
+      // Calculate changes
       const change = formatToTwoDecimals(last.close - first.open);
       const changePercent = formatToTwoDecimals((change / first.open) * 100);
       
-      // Encontrar máximo y mínimo en el período
+      // Find maximum and minimum in the period
       let max = Number.MIN_VALUE;
       let min = Number.MAX_VALUE;
       
@@ -1108,23 +1100,23 @@
       
       const statsHTML = `
         <div class="stat-box">
-          <div class="stat-label">Precio Actual</div>
+          <div class="stat-label">Current Price</div>
           <div class="stat-value">$${formatToTwoDecimals(last.close).toFixed(2)}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Cambio</div>
+          <div class="stat-label">Change</div>
           <div class="stat-value ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">% Cambio</div>
+          <div class="stat-label">% Change</div>
           <div class="stat-value ${changePercent >= 0 ? 'up' : 'down'}">${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Máximo</div>
+          <div class="stat-label">Maximum</div>
           <div class="stat-value">$${max.toFixed(2)}</div>
         </div>
         <div class="stat-box">
-          <div class="stat-label">Mínimo</div>
+          <div class="stat-label">Minimum</div>
           <div class="stat-value">$${min.toFixed(2)}</div>
         </div>
       `;
@@ -1136,13 +1128,13 @@
     <script>
       let currentUser = <%- JSON.stringify(user || null) %>;
         const userId = currentUser.id;
-        // Datos de ejemplo para los portafolios
+        // Sample data for portfolios
         let samplePortfolios = null;
 ;
-        // Variables globales
+        // Global variables
         let selectedPortfolioId = null;
 
-        // Elementos del DOM
+        // DOM elements
         const openModalBtn = document.getElementById('openPortfolioModal');
         const modalOverlay = document.getElementById('portfolioModal');
         const closeModalBtn = document.getElementById('closeModal');
@@ -1155,19 +1147,19 @@
   try {
     const response = await fetch(`/db/portfolios/${userId}`);
     if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+      throw new Error(`HTTP Error: ${response.status}`);
     }
     const data = await response.json();
     // samplePortfolios = data.portfolios;
     return data.portfolios;
   } catch (error) {
-    console.error('Error al obtener samplePortafolios:', error);
+    console.error('Error getting sample portfolios:', error);
     throw error;
   }
 };
 
 
-        // Función para formatear moneda
+        // Function to format currency
         function formatCurrency(amount) {
             return new Intl.NumberFormat('en-US', {
                 style: 'currency',
@@ -1179,7 +1171,7 @@ async function renderPortfolios() {
     try {
         const response = await fetch(`/db/portfolios/${userId}`);
     if (!response.ok) {
-      throw new Error(`Error HTTP: ${response.status}`);
+      throw new Error(`HTTP Error: ${response.status}`);
     }
     const data = await response.json();
     console.log(data.data.portfolios);
@@ -1188,7 +1180,7 @@ async function renderPortfolios() {
             portfolioList.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📂</div>
-                    <p>No hay portafolios disponibles</p>
+                    <p>No portfolios available</p>
                 </div>
             `;
             return;
@@ -1204,44 +1196,44 @@ async function renderPortfolios() {
             </li>
         `).join('');
     } catch (error) {
-        console.error('Error al renderizar portafolios:', error);
+        console.error('Error rendering portfolios:', error);
         portfolioList.innerHTML = `
             <div class="error-state">
                 <div class="error-icon">⚠️</div>
-                <p>Error al cargar los portafolios</p>
+                <p>Error loading portfolios</p>
             </div>
         `;
     }
 }
-        // Función para abrir el modal
+        // Function to open modal
         function openModal() {
             modalOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        // Función para cerrar el modal
+        // Function to close modal
         function closeModal() {
             modalOverlay.classList.remove('active');
             document.body.style.overflow = 'auto';
             
-            // Resetear selección
+            // Reset selection
             selectedPortfolioId = null;
             confirmBtn.disabled = true;
             
-            // Remover selección visual
+            // Remove visual selection
             document.querySelectorAll('.portfolio-item').forEach(item => {
                 item.classList.remove('selected');
             });
         }
 
-        // Función para confirmar la selección
+        // Function to confirm selection
         function confirmSelection() {
             if (!selectedPortfolioId) return;
             
             const selectedPortfolio = samplePortfolios.find(p => p.id == selectedPortfolioId);
-            alert(`Has seleccionado el portafolio: ${selectedPortfolio.name}`);
+            alert(`You have selected the portfolio: ${selectedPortfolio.name}`);
             
-            // Aquí podrías redirigir a la página de compra o realizar otra acción
+            // Here you could redirect to the purchase page or perform another action
             closeModal();
         }
 
@@ -1274,16 +1266,16 @@ async function selectPort(id) {
         const result = await response.json();
         
         if (response.ok) {
-            alert('Compra realizada:', result.message);
+            alert('Purchase completed:', result.message);
              const redirectUrl = '/portfolio/assets/' + id;
               window.location.href = redirectUrl;
-            // Aquí puedes agregar lógica adicional después de una compra exitosa
+            // You can add additional logic after a successful purchase here
         } else {
-            alert('Error en compra:', result.error);
-            // Manejar el error (mostrar mensaje al usuario, etc.)
+            alert('Purchase error:', result.error);
+            // Handle error (show message to user, etc.)
         }
     } catch (error) {
-        console.error('Error de conexión:', error);
+        console.error('Connection error:', error);
     }
 }
 
@@ -1293,14 +1285,14 @@ async function selectPort(id) {
         cancelBtn.addEventListener('click', closeModal);
         confirmBtn.addEventListener('click', confirmSelection);
 
-        // Cerrar modal al hacer clic fuera del contenido
+        // Close modal when clicking outside content
         modalOverlay.addEventListener('click', (e) => {
             if (e.target === modalOverlay) {
                 closeModal();
             }
         });
 
-        // Inicializar la lista de portafolios
+        // Initialize portfolio list
         renderPortfolios();
     </script>
 

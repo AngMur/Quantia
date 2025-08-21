@@ -118,7 +118,7 @@ async function updateChart(symbol, chartId) {
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Precio',
+                        label: 'Price',
                         data: closePrices,
                         borderColor: chartColor,
                         backgroundColor: `${chartColor}20`,
@@ -171,16 +171,16 @@ async function updateChart(symbol, chartId) {
         }
         
     } catch (error) {
-        console.error('Error al actualizar el gráfico:', error);
-        chartContainer.innerHTML = `<div class="error">Error al cargar datos: ${error.message}</div>`;
+        console.error('Error during updating data', error);
+        chartContainer.innerHTML = `<div class="error">Error loading data: ${error.message}</div>`;
         
         // Reintentar en 30 segundos si hay error
         clearInterval(refreshInterval);
         setTimeout(() => {
             refreshInterval = setInterval(() => {
-                updateChart('IBM', 'chartContainer');
-                updateChart('AMZN', 'chartContainer2');
-                updateChart('AAPL', 'chartContainer3');
+                updateChart('AMZN', 'chartContainer');
+                // updateChart('AMZN', 'chartContainer2');
+                // updateChart('AAPL', 'chartContainer3');
             }, UPDATE_INTERVAL);
             updateChart(symbol, chartId);
         }, 30000);
@@ -189,13 +189,13 @@ async function updateChart(symbol, chartId) {
 
 // Inicializar los gráficos cuando la página cargue
 window.addEventListener('load', () => {
-    updateChart('IBM', 'chartContainer');
+    updateChart('AMZN', 'chartContainer');
     // updateChart('AMZN', 'chartContainer2');
     // updateChart('AAPL', 'chartContainer3');
     
     // Configurar actualización periódica
     refreshInterval = setInterval(() => {
-        updateChart('IBM', 'chartContainer');
+        updateChart('AMZN', 'chartContainer');
         // updateChart('AMZN', 'chartContainer2');
         // updateChart('AAPL', 'chartContainer3');
     }, UPDATE_INTERVAL);
@@ -211,6 +211,6 @@ window.addEventListener('beforeunload', () => {
 
 document.addEventListener('DOMContentLoaded', function() {
             // Animación de entrada para las tarjetas
-                    updateChart('IBM', 'chartContainer');
+                    updateChart('AMZN', 'chartContainer');
 
         });

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Portafolio - FinanceHub</title>
+    <title>Portfolio</title>
     <style>
         /* (Todos tus estilos CSS anteriores aquí) */
         * {
@@ -953,13 +953,13 @@
     </header>
 
     <div class="main-container">
-        <h1 class="portfolio-title">Mi Portafolio</h1>
-        <p class="portfolio-subtitle">Gestiona y supervisa tus inversiones en tiempo real</p>
+        <h1 class="portfolio-title">Portfolio</h1>
+        <p class="portfolio-subtitle">Manage and monitor your investments in real time</p>
 
         <div id="content">
             <div class="loading">
                 <div class="spinner"></div>
-                <p>Cargando datos del portafolio...</p>
+                <p>Loading portfolio data...</p>
             </div>
         </div>
     </div>
@@ -968,14 +968,14 @@
     <div class="modal-overlay" id="tradeModal">
         <div class="modal">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle">Operación</h2>
+                <h2 class="modal-title" id="modalTitle">Operation</h2>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             
             <div id="modalContent">
                 <div class="loading-modal">
                     <div class="spinner-modal"></div>
-                    <p>Cargando información...</p>
+                    <p>Loading data...</p>
                 </div>
             </div>
         </div>
@@ -1026,7 +1026,7 @@
 
         async function loadAssetData(symbol, quantity) {
             try {
-                document.getElementById('modalTitle').textContent = currentAction === 'buy' ? 'Comprar ' + symbol : 'Vender ' + symbol;
+                document.getElementById('modalTitle').textContent = currentAction === 'buy' ? 'Buy ' + symbol : 'Sell ' + symbol;
                 
                 // Obtener datos del precio del activo
                 const priceResponse = await fetch(`http://localhost:5000/api/price/${symbol}`);
@@ -1038,7 +1038,7 @@
                 // Obtener datos del usuario
                 const userResponse = await fetch(`http://localhost:5000/db/user/${userId}`);
                 if (!userResponse.ok) {
-                    throw new Error('Error al obtener datos del usuario');
+                    throw new Error('Error getting user data');
                 }
                 const userData = await userResponse.json();
                 
@@ -1078,65 +1078,65 @@
 
                 <div class="price-info-modal">
                     <div class="price-row">
-                        <span class="price-label">Precio actual:</span>
+                        <span class="price-label">Current Price:</span>
                         <span class="price-value">${formatCurrency(priceData.currentPrice)}</span>
                     </div>
                     <div class="price-row">
-                        <span class="price-label">Cambio:</span>
+                        <span class="price-label">Change:</span>
                         <span class="price-value ${getChangeClass(priceData.change)}">
                             ${formatCurrency(priceData.change)} (${formatPercentage(priceData.changePercent)})
                         </span>
                     </div>
                     <div class="price-row">
-                        <span class="price-label">Cierre anterior:</span>
+                        <span class="price-label">Last close price:</span>
                         <span class="price-value">${formatCurrency(priceData.previousClose)}</span>
                     </div>
                     <div class="price-row">
-                        <span class="price-label">Mercado:</span>
+                        <span class="price-label">Market status:</span>
                         <span class="price-value">${priceData.isMarketOpen ? '🟢 Abierto' : '🔴 Cerrado'}</span>
                     </div>
                 </div>
 
                 <div class="price-info-modal">
                     <div class="price-row">
-                        <span class="price-label">Saldo disponible:</span>
+                        <span class="price-label">Available balance:</span>
                         <span class="price-value">${formatCurrency(userData.balance)}</span>
                     </div>
                     <div class="price-row">
-                        <span class="price-label">Cantidad:</span>
+                        <span class="price-label">Quantity:</span>
                         <span class="price-value">${globalQuantity}</span>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label" for="quantity">Cantidad a ${actionText.toLowerCase()}:</label>
+                    <label class="form-label" for="quantity">Quantity to ${actionText.toLowerCase()}:</label>
                     <input type="number" id="quantity" class="form-input" min="1" step="1" value="1" 
-                           oninput="calculateTotal(${priceData.currentPrice})" placeholder="Ingrese la cantidad">
+                           oninput="calculateTotal(${priceData.currentPrice})" placeholder="Enter the amount">
                 </div>
 
                 <div class="calculation-result">
                     <div class="calculation-row">
-                        <span class="calculation-label">Precio unitario:</span>
+                        <span class="calculation-label">Unit Price:</span>
                         <span class="calculation-value">${formatCurrency(priceData.currentPrice)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span class="calculation-label">Total estimado:</span>
+                        <span class="calculation-label">Estimated total:</span>
                         <span class="calculation-value" id="totalAmount">${formatCurrency(priceData.currentPrice)}</span>
                     </div>
                     <div class="calculation-row">
-                        <span class="calculation-label">Comisiones:</span>
+                        <span class="calculation-label">Commissions:</span>
                         <span class="calculation-value">${formatCurrency(0)}</span>
                     </div>
                     <div class="calculation-row" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(148, 163, 184, 0.2);">
-                        <span class="calculation-label" style="font-weight: 600;">Total final:</span>
+                        <span class="calculation-label" style="font-weight: 600;">Final total:</span>
                         <span class="calculation-value" style="font-weight: 700;" id="finalAmount">${formatCurrency(priceData.currentPrice)}</span>
                     </div>
                 </div>
 
                 <div class="modal-actions">
-                    <button class="btn-modal btn-modal-secondary" onclick="closeModal()">Cancelar</button>
+                    <button class="btn-modal btn-modal-secondary" onclick="closeModal()">Cancel</button>
                     <button class="btn-modal btn-modal-primary" onclick="executeTrade()">
-                        ${actionText} Ahora
+                        ${actionText} Now
                     </button>
                 </div>
             `;
@@ -1155,13 +1155,13 @@
         async function executeTrade() {
             const quantity = parseInt(document.getElementById('quantity').value) || 0;
             if (quantity <= 0) {
-                alert('Por favor, ingrese una cantidad válida');
+                alert('Please enter a valid amount');
                 return;
             } else if(currentAction == "sell" && quantity > globalQuantity){
-                alert("No puedes vender más activos de los que posees");
+                alert("You cannot sell more assets than you own");
                 return;
             } else if(currentAction == "buy" && totalTrade > globalBalance){
-                alert("No tienes sufiente saldo para esta operacion");
+                alert("You do not have enough balance for this operation");
                 return;
             }
 
@@ -1205,12 +1205,12 @@
             document.getElementById('modalContent').innerHTML = `
                 <div style="text-align: center; padding: 2rem;">
                     <div style="font-size: 3rem; color: #10b981; margin-bottom: 1rem;">✅</div>
-                    <h3 style="color: #f8fafc; margin-bottom: 1rem;">${currentAction === 'buy' ? 'Compra' : 'Venta'} Exitosa</h3>
+                    <h3 style="color: #f8fafc; margin-bottom: 1rem;">${currentAction === 'buy' ? 'Buy' : 'Sell'} Successful</h3>
                     <p style="color: #94a3b8; margin-bottom: 1.5rem;">
                         ${result.message}<br>
-                        ${quantity} acciones de ${currentSymbol} por ${formatCurrency(totalTrade)}
+                        ${quantity} stocks of ${currentSymbol} for ${formatCurrency(totalTrade)}
                     </p>
-                    <button class="btn-modal btn-modal-primary" onclick="closeModalAndRefresh()">Aceptar</button>
+                    <button class="btn-modal btn-modal-primary" onclick="closeModalAndRefresh()">Done</button>
                 </div>
             `;
             
@@ -1218,18 +1218,18 @@
             location.reload();
         } else {
             // Error en la transacción
-            throw new Error(result.error || 'Error desconocido en la transacción');
+            throw new Error(result.error || 'Unknown error in the transaction');
         }
     } catch (error) {
-        console.error('Error en la transacción:', error);
+        console.error('Transaction error:', error);
         document.getElementById('modalContent').innerHTML = `
             <div style="text-align: center; padding: 2rem;">
                 <div style="font-size: 3rem; color: #ef4444; margin-bottom: 1rem;">❌</div>
-                <h3 style="color: #f8fafc; margin-bottom: 1rem;">Error en la Transacción</h3>
+                <h3 style="color: #f8fafc; margin-bottom: 1rem;">Transaction error:</h3>
                 <p style="color: #94a3b8; margin-bottom: 1.5rem;">${error.message}</p>
                 <div class="modal-actions">
-                    <button class="btn-modal btn-modal-secondary" onclick="closeModal()">Cancelar</button>
-                    <button class="btn-modal btn-modal-primary" onclick="executeTrade()">Reintentar</button>
+                    <button class="btn-modal btn-modal-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn-modal btn-modal-primary" onclick="executeTrade()">Retry</button>
                 </div>
             </div>
         `;
@@ -1284,7 +1284,7 @@
                 const response = await fetch('/db/portfolio/assets/' + portfolioId);
                 
                 if (!response.ok) {
-                    throw new Error('Error ' + response.status + ': No se pudo conectar con el servidor');
+                    throw new Error('Error ' + response.status + ': Could not connect to the server');
                 }
                 
                 const result = await response.json();
@@ -1296,7 +1296,7 @@
                     await fetchAssetPrices(assets);
                     renderPortfolioView(result.data);
                 } else {
-                    throw new Error('Formato de datos inválido en la respuesta del servidor');
+                    throw new Error('Invalid data format in server response');
                 }
             } catch (error) {
                 renderError(error.message);
@@ -1323,7 +1323,7 @@
             document.getElementById('content').innerHTML = 
                 '<div class="empty-state">' +
                     '<div class="empty-icon">⚠️</div>' +
-                    '<h3>Error al cargar el portafolio</h3>' +
+                    '<h3>Error loading portfolio</h3>' +
                     '<p>' + message + '</p>' +
                 '</div>';
         }
@@ -1402,8 +1402,8 @@
                             '</td>' +
                             '<td class="table-cell">' +
                                 '<div class="quantity-info">' +
-                                    '<div class="quantity-main">' + asset.quantity + ' acciones</div>' +
-                                    '<div class="quantity-sub">Compra promedio</div>' +
+                                    '<div class="quantity-main">' + asset.quantity + ' stocks</div>' +
+                                    '<div class="quantity-sub">Average purchase</div>' +
                                 '</div>' +
                             '</td>' +
                             '<td class="table-cell value-cell">' + formatCurrency(currentValue) + '</td>' +
@@ -1424,50 +1424,50 @@
             content.innerHTML = 
                 '<div class="stats-grid">' +
                     '<div class="stat-card">' +
-                        '<div class="stat-label">Valor Total</div>' +
+                        '<div class="stat-label">Total Value</div>' +
                         '<div class="stat-value">' + formatCurrency(totalCurrentValue) + '</div>' +
                         '<div class="stat-change ' + getChangeClass(totalGainLoss) + '">' + 
                             formatCurrency(totalGainLoss) + ' (' + formatPercentage(totalGainLossPercent) + ')' +
                         '</div>' +
                     '</div>' +
                     '<div class="stat-card">' +
-                        '<div class="stat-label">Ganancia/Pérdida Diaria</div>' +
+                        '<div class="stat-label">Daily Profit/Loss</div>' +
                         '<div class="stat-value ' + getChangeClass(dailyGainLoss) + '">' + formatCurrency(dailyGainLoss) + '</div>' +
-                        '<div class="stat-change ' + getChangeClass(dailyGainLossPercent) + '">' + formatPercentage(dailyGainLossPercent) + ' hoy</div>' +
+                        '<div class="stat-change ' + getChangeClass(dailyGainLossPercent) + '">' + formatPercentage(dailyGainLossPercent) + ' today</div>' +
                     '</div>' +
                     '<div class="stat-card">' +
-                        '<div class="stat-label">Total Invertido</div>' +
+                        '<div class="stat-label">Total Invested</div>' +
                         '<div class="stat-value">' + formatCurrency(data.total_value) + '</div>' +
-                        '<div class="stat-change neutral">Capital inicial</div>' +
+                        '<div class="stat-change neutral">Initial capital</div>' +
                     '</div>' +
                     '<div class="stat-card">' +
-                        '<div class="stat-label">Rendimiento Total</div>' +
+                        '<div class="stat-label">Total Performance</div>' +
                         '<div class="stat-value ' + getChangeClass(totalGainLossPercent) + '">' + formatPercentage(totalGainLossPercent) + '</div>' +
-                        '<div class="stat-change neutral">Desde el inicio</div>' +
+                        '<div class="stat-change neutral">From the beginning</div>' +
                     '</div>' +
                     '<div class="stat-card">' +
-                        '<div class="stat-label">Número de Posiciones</div>' +
+                        '<div class="stat-label">Number of Positions</div>' +
                         '<div class="stat-value">' + data.count + '</div>' +
-                        '<div class="stat-change neutral">Activos diferentes</div>' +
+                        '<div class="stat-change neutral">Different assets</div>' +
                     '</div>' +
                 '</div>' +
                 
                 '<div class="investments-section">' +
                     '<div class="section-header">' +
-                        '<h2 class="section-title">Mis Inversiones</h2>' +
+                        '<h2 class="section-title">My Investments</h2>' +
                     '</div>' +
                     (data.assets && data.assets.length > 0 ?
                         '<div class="table-container">' +
                             '<table class="investments-table">' +
                                 '<thead class="table-header">' +
                                     '<tr>' +
-                                        '<th>Activo</th>' +
-                                        '<th>Precio Actual</th>' +
-                                        '<th>Cantidad</th>' +
-                                        '<th>Valor Total</th>' +
-                                        '<th>% Portafolio</th>' +
-                                        '<th>Ganancia/Pérdida</th>' +
-                                        '<th>Acciones</th>' +
+                                        '<th>Asset</th>' +
+                                        '<th>Current Price</th>' +
+                                        '<th>Quantity</th>' +
+                                        '<th>Total Value</th>' +
+                                        '<th>% Portfolio</th>' +
+                                        '<th>Profit/Loss</th>' +
+                                        '<th>Actions</th>' +
                                     '</tr>' +
                                 '</thead>' +
                                 '<tbody>' +
@@ -1478,8 +1478,8 @@
                     :
                         '<div class="empty-state">' +
                             '<div class="empty-icon">📈</div>' +
-                            '<h3>No hay inversiones</h3>' +
-                            '<p>Agrega tu primera inversión para comenzar</p>' +
+                            '<h3>There are no investments</h3>' +
+                            '<p>Add your first investment to get started</p>' +
                         '</div>'
                     ) +
                 '</div>';

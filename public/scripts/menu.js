@@ -38,7 +38,7 @@ function handleMenuClick(action) {
             window.location.href = '/help';
             break;
         case 'logout':
-            if(confirm('¿Estás seguro de que quieres cerrar sesión?')) {
+            if(confirm('Are you sure you want to log out?')) {
                 // Hacer logout
                 window.location.href = '/logout';
             }

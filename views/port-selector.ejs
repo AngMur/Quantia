@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Portafolio</title>
+    <title>Select Portfolio</title>
     <style>
         * {
             margin: 0;
@@ -243,14 +243,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💼 Seleccionar Portafolio</h1>
-            <p>Elige el portafolio con el que deseas trabajar</p>
+            <h1>💼 Select Portfolio</h1>
+            <p>Choose the portfolio you want to work with</p>
         </div>
         
         <div id="content">
             <div class="loading">
                 <div class="spinner"></div>
-                <p>Cargando portafolios...</p>
+                <p>Loading portfolios...</p>
             </div>
         </div>
     </div>
@@ -265,7 +265,7 @@
                 const response = await fetch(`/db/portfolios/${userId}`);
                 
                 if (!response.ok) {
-                    throw new Error('Error ' + response.status + ': No se pudo conectar con el servidor');
+                    throw new Error('Error ' + response.status + ': Could not connect to the server');
                 }
                 
                 const result = await response.json();
@@ -274,7 +274,7 @@
                     portfolios = result.data.portfolios;
                     renderPortfolioCards();
                 } else {
-                    throw new Error('Formato de datos inválido en la respuesta del servidor');
+                    throw new Error('Invalid data format in server response');
                 }
             } catch (error) {
                 renderError(error.message);
@@ -282,19 +282,24 @@
         }
 
         function formatCurrency(amount) {
-            return new Intl.NumberFormat('es-MX', {
+            return new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: 'MXN'
+                currency: 'USD'
             }).format(amount);
         }
 
         function getPortfolioIcon(name) {
             const icons = {
+                'main': '🏛️',
                 'principal': '🏛️',
                 'crypto': '₿',
+                'stocks': '📈',
                 'acciones': '📈',
+                'bonds': '📊',
                 'bonos': '📊',
+                'emergency': '🚨',
                 'emergencia': '🚨',
+                'savings': '💰',
                 'ahorro': '💰'
             };
             
@@ -311,7 +316,7 @@
             document.getElementById('content').innerHTML = 
                 '<div class="error">' +
                     '<div class="error-icon">⚠️</div>' +
-                    '<div class="error-title">Error al cargar portafolios</div>' +
+                    '<div class="error-title">Error loading portfolios</div>' +
                     '<div class="error-message">' + message + '</div>' +
                 '</div>';
         }
@@ -336,14 +341,14 @@
                         '<div class="portfolio-stats">' +
                             '<div class="stat-item">' +
                                 '<div class="stat-value">' + portfolio.assets_count + '</div>' +
-                                '<div class="stat-label">Activos</div>' +
+                                '<div class="stat-label">Assets</div>' +
                             '</div>' +
                             '<div class="stat-item">' +
                                 '<div class="stat-value">' + formatCurrency(portfolio.total_invested) + '</div>' +
-                                '<div class="stat-label">Invertido</div>' +
+                                '<div class="stat-label">Invested</div>' +
                             '</div>' +
                         '</div>' +
-                        '<button class="select-button">Seleccionar Portafolio</button>' +
+                        '<button class="select-button">Select Portfolio</button>' +
                     '</div>';
             }
             
@@ -352,26 +357,26 @@
         }
 
         function selectPortfolio(portfolioId) {
-            // Aquí puedes cambiar la URL a donde quieres redirigir
-            // Por ejemplo, si quieres ir a una página de detalles del portafolio:
+            // Here you can change the URL to where you want to redirect
+            // For example, if you want to go to a portfolio details page:
             const redirectUrl = '/portfolio/assets/' + portfolioId;
             
-            // O si quieres pasar el ID como parámetro:
+            // Or if you want to pass the ID as a parameter:
             // const redirectUrl = '/dashboard?portfolio=' + portfolioId;
             
-            // Mostrar mensaje de confirmación antes de redirigir (opcional)
+            // Show confirmation message before redirecting (optional)
             const selectedPortfolio = portfolios.find(p => p.portfolio_id === portfolioId);
             if (selectedPortfolio) {
-                console.log('Redirigiendo a:', redirectUrl);
-                console.log('Portafolio seleccionado:', selectedPortfolio.name);
+                console.log('Redirecting to:', redirectUrl);
+                console.log('Selected portfolio:', selectedPortfolio.name);
                 
-                // Redirigir (descomenta la línea que prefieras):
+                // Redirect (uncomment the line you prefer):
                 window.location.href = redirectUrl;
-                // window.open(redirectUrl, '_blank'); // Para abrir en nueva pestaña
+                // window.open(redirectUrl, '_blank'); // To open in a new tab
             }
         }
 
-        // Inicializar la aplicación
+        // Initialize the application
         fetchPortfolios();
     </script>
 </body>

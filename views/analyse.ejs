@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seleccionar Tipo de Análisis</title>
+    <title>Select Analysis Type</title>
     <style>
         * {
             margin: 0;
@@ -217,7 +217,7 @@
             z-index: 1;
         }
 
-        /* Colores específicos para cada tarjeta */
+        /* Specific colors for each card */
         .historical {
             --accent-color: #3b82f6;
         }
@@ -230,7 +230,7 @@
             --accent-color: #f59e0b;
         }
 
-        /* Animaciones adicionales */
+        /* Additional animations */
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-10px) rotate(2deg); }
@@ -282,7 +282,7 @@
             }
         }
 
-        /* Efectos de partículas decorativas */
+        /* Decorative particle effects */
         .particle {
             position: absolute;
             width: 4px;
@@ -314,88 +314,88 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📊 Dashboard de Análisis</h1>
-            <p>Selecciona el tipo de análisis que deseas realizar</p>
+            <h1>📊 Analysis Dashboard</h1>
+            <p>Select the type of analysis you want to perform</p>
         </div>
         
         <div class="analysis-grid">
-            <!-- Análisis Histórico -->
-            <div class="analysis-card historical" onclick="redirectToAnalysis('historico')">
+            <!-- Historical Analysis -->
+            <div class="analysis-card historical" onclick="redirectToAnalysis('historical')">
                 <div class="particle" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
                 <div class="particle" style="top: 60%; left: 80%; animation-delay: 3s;"></div>
                 <div class="card-content">
                     <div class="analysis-header">
                         <div class="analysis-icon">📈</div>
                         <div class="analysis-info">
-                            <h3>Análisis Histórico</h3>
-                            <p>Datos del pasado</p>
+                            <h3>Historical Analysis</h3>
+                            <p>Data from the past</p>
                         </div>
                     </div>
                     <div class="analysis-description">
-                        Explora y analiza el rendimiento histórico de tus inversiones. Visualiza tendencias, patrones y comportamientos pasados para entender mejor tu portafolio.
+                        Explore and analyze the historical performance of your investments. Visualize trends, patterns, and past behavior to better understand your portfolio.
                     </div>
                     <div class="analysis-features">
-                        <div class="feature-item">Gráficos de rendimiento temporal</div>
-                        <div class="feature-item">Análisis de volatilidad histórica</div>
-                        <div class="feature-item">Comparación con benchmarks</div>
-                        <div class="feature-item">Métricas de riesgo pasado</div>
+                        <div class="feature-item">Time performance charts</div>
+                        <div class="feature-item">Historical volatility analysis</div>
+                        <div class="feature-item">Comparison with benchmarks</div>
+                        <div class="feature-item">Past risk metrics</div>
                     </div>
                     <button class="select-button">
-                        <span>Analizar Histórico</span>
+                        <span>Analyze History</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Análisis Predictivo -->
-            <div class="analysis-card predictive" onclick="redirectToAnalysis('predictivo')">
+            <!-- Predictive Analysis -->
+            <div class="analysis-card predictive" onclick="redirectToAnalysis('predictive')">
                 <div class="particle" style="top: 30%; left: 20%; animation-delay: 1s;"></div>
                 <div class="particle" style="top: 70%; left: 70%; animation-delay: 4s;"></div>
                 <div class="card-content">
                     <div class="analysis-header">
                         <div class="analysis-icon">🔮</div>
                         <div class="analysis-info">
-                            <h3>Análisis Predictivo</h3>
-                            <p>Proyecciones futuras</p>
+                            <h3>Predictive Analysis</h3>
+                            <p>Future projections</p>
                         </div>
                     </div>
                     <div class="analysis-description">
-                        Utiliza algoritmos avanzados de machine learning para proyectar posibles escenarios futuros y optimizar tu estrategia de inversión basada en tendencias.
+                        Use advanced machine learning algorithms to project possible future scenarios and optimize your investment strategy based on trends.
                     </div>
                     <div class="analysis-features">
-                        <div class="feature-item">Modelos de predicción IA</div>
-                        <div class="feature-item">Escenarios de monte carlo</div>
-                        <div class="feature-item">Pronósticos de rendimiento</div>
-                        <div class="feature-item">Optimización de portafolio</div>
+                        <div class="feature-item">AI prediction models</div>
+                        <div class="feature-item">Monte Carlo scenarios</div>
+                        <div class="feature-item">Performance forecasts</div>
+                        <div class="feature-item">Portfolio optimization</div>
                     </div>
                     <button class="select-button">
-                        <span>Analizar Predictivo</span>
+                        <span>Analyze Predictive</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Análisis de Próximo -->
-            <div class="analysis-card proximity" onclick="redirectToAnalysis('proximo')">
+            <!-- Proximity Analysis -->
+            <div class="analysis-card proximity" onclick="redirectToAnalysis('proximity')">
                 <div class="particle" style="top: 40%; left: 15%; animation-delay: 2s;"></div>
                 <div class="particle" style="top: 50%; left: 85%; animation-delay: 5s;"></div>
                 <div class="card-content">
                     <div class="analysis-header">
                         <div class="analysis-icon">⏰</div>
                         <div class="analysis-info">
-                            <h3>Análisis de Próximo</h3>
-                            <p>Corto plazo</p>
+                            <h3>Proximity Analysis</h3>
+                            <p>Short term</p>
                         </div>
                     </div>
                     <div class="analysis-description">
-                        Enfócate en oportunidades y riesgos inmediatos. Analiza movimientos recientes del mercado y toma decisiones informadas para el corto plazo.
+                        Focus on immediate opportunities and risks. Analyze recent market movements and make informed decisions for the short term.
                     </div>
                     <div class="analysis-features">
-                        <div class="feature-item">Alertas de mercado en tiempo real</div>
-                        <div class="feature-item">Análisis técnico avanzado</div>
-                        <div class="feature-item">Señales de entrada/salida</div>
-                        <div class="feature-item">Monitoreo de volatilidad</div>
+                        <div class="feature-item">Real-time market alerts</div>
+                        <div class="feature-item">Advanced technical analysis</div>
+                        <div class="feature-item">Entry/exit signals</div>
+                        <div class="feature-item">Volatility monitoring</div>
                     </div>
                     <button class="select-button">
-                        <span>Analizar Próximo</span>
+                        <span>Analyze Proximity</span>
                     </button>
                 </div>
             </div>
@@ -404,37 +404,37 @@
 
     <script>
         function redirectToAnalysis(type) {
-            // Definir las URLs de redirección para cada tipo de análisis
+            // Define redirect URLs for each analysis type
             const redirectUrls = {
-                'historico': '/analyse/historic',
-                'predictivo': '/analyse/predictive',
-                'proximo': '/analyse/close'
+                'historical': '/analyse/historic',
+                'predictive': '/analyse/predictive',
+                'proximity': '/analyse/close'
             };
 
             const redirectUrl = redirectUrls[type];
             
             if (redirectUrl) {
-                console.log(`Redirigiendo a análisis ${type}:`, redirectUrl);
+                console.log(`Redirecting to ${type} analysis:`, redirectUrl);
                 
-                // Efecto visual antes de redirigir
+                // Visual effect before redirecting
                 const card = event.currentTarget;
                 card.style.transform = 'scale(0.95)';
                 card.style.opacity = '0.8';
                 
                 setTimeout(() => {
-                    // Redirigir a la URL correspondiente
+                    // Redirect to the corresponding URL
                     window.location.href = redirectUrl;
                     
-                    // Alternativas de redirección:
-                    // window.open(redirectUrl, '_blank'); // Nueva pestaña
-                    // window.location.replace(redirectUrl); // Sin historial
+                    // Alternative redirect methods:
+                    // window.open(redirectUrl, '_blank'); // New tab
+                    // window.location.replace(redirectUrl); // Without history
                 }, 200);
             } else {
-                console.error('URL de redirección no encontrada para:', type);
+                console.error('Redirect URL not found for:', type);
             }
         }
 
-        // Crear partículas adicionales dinámicamente
+        // Create additional particles dynamically
         function createParticles() {
             const cards = document.querySelectorAll('.analysis-card');
             cards.forEach(card => {
@@ -450,11 +450,11 @@
             });
         }
 
-        // Inicializar efectos visuales
+        // Initialize visual effects
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
             
-            // Añadir efectos de hover adicionales
+            // Add additional hover effects
             const cards = document.querySelectorAll('.analysis-card');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
@@ -468,7 +468,7 @@
             });
         });
 
-        // Función auxiliar para convertir color hex a rgb
+        // Helper function to convert hex color to rgb
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {

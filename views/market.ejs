@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quantia - Buscador de Acciones</title>
+    <title>Quantia - Stock Finder</title>
     <style>
         * {
             margin: 0;
@@ -502,46 +502,46 @@
             <nav>
                 <ul class="nav-menu">
                     <li><a href="/market" class="active">Market</a></li>
-                    <li><a href="/balance" >Balance</a></li>
+                    <li><a href="/balance">Balance</a></li>
                     <li><a href="/port-selector">Portfolio</a></li>
-                    <li><a href="/analyse">Noticias</a></li>
+                    <li><a href="/analyse">News</a></li>
                 </ul>
             </nav>
 <div class="user-profile" onclick="toggleUserMenu(event)">
     <div class="user-avatar" id="userAvatar">
         <%= user.username ? user.username.substring(0, 2).toUpperCase() : 'US' %>
     </div>
-    <span id="usernameDisplay"><%= user.username || 'Usuario' %></span>
+    <span id="usernameDisplay"><%= user.username || 'User' %></span>
     
-    <!-- Menú desplegable -->
+    <!-- Dropdown menu -->
     <div class="dropdown-menu" id="userDropdown">
         <div class="menu-header">
             <div class="avatar"><%= user.username ? user.username.substring(0, 2).toUpperCase() : 'US' %></div>
-            <h3><%= user.username || 'Usuario' %></h3>
-            <p><%= user.email || 'usuario@email.com' %></p>
+            <h3><%= user.username || 'User' %></h3>
+            <p><%= user.email || 'user@email.com' %></p>
         </div>
         
         <div class="menu-items">
             <div class="menu-item" onclick="handleMenuClick('profile')">
                 <span>👤</span>
-                Ver Perfil
+                View Profile
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('settings')">
                 <span>⚙️</span>
-                Configuración
+                Settings
             </div>
             
             <div class="menu-item" onclick="handleMenuClick('help')">
                 <span>❓</span>
-                Ayuda
+                Help
             </div>
             
             <div class="menu-divider"></div>
             
             <div class="menu-item logout" onclick="handleMenuClick('logout')">
                 <span>🚪</span>
-                Cerrar Sesión
+                Log Out
             </div>
         </div>
     </div>
@@ -551,28 +551,28 @@
 
     <main class="main-container">
         <section class="hero-section">
-            <h1 class="hero-title">Buscador de Acciones</h1>
-            <p class="hero-subtitle">Encuentra y analiza acciones del mercado global con información en tiempo real</p>
+            <h1 class="hero-title">Stock Finder</h1>
+            <p class="hero-subtitle">Find and analyze global market stocks with real-time information</p>
         </section>
 
         <div class="search-container">
-            <input type="text" id="stockSearch" placeholder="Buscar acción (ej. Apple, Amazon, Tesla...)">
+            <input type="text" id="stockSearch" placeholder="Search for a stock (e.g. Apple, Amazon, Tesla...)">
             <button class="search-btn" onclick="searchStocks()">
-                <span>Buscar</span>
+                <span>Search</span>
             </button>
         </div>
 
         <div id="searchResults">
             <div class="initial-message">
-                <p>Ingrese un término de búsqueda para comenzar a explorar el mundo de las inversiones</p>
+                <p>Enter a search term to start exploring the world of investments</p>
             </div>
         </div>
     </main>
 
     <script>
-        // Configuración de la API (reemplaza con tu API key real)
+        // API configuration (replace with your real API key)
         async function getStockSymbols(searchTerm = '') {
-            // Verificar si el término de búsqueda está vacío
+            // Check if the search term is empty
             if (!searchTerm.trim()) {
                 return [];
             }
@@ -584,7 +584,7 @@
                 console.log(response);
                 
                 if (!response.ok) {
-                    throw new Error(`Error HTTP: ${response.status}`);
+                    throw new Error(`HTTP Error: ${response.status}`);
                 }
                 
                 const data = await response.json();
@@ -597,7 +597,7 @@
 
                 return data.results;
             } catch (error) {
-                console.error("Error al obtener datos:", error);
+                console.error("Error getting data:", error);
                 throw error;
             }
         }
@@ -607,11 +607,11 @@
             const resultsContainer = document.getElementById('searchResults');
             
             if (!searchInput) {
-                resultsContainer.innerHTML = '<p class="error">Por favor ingrese un término de búsqueda</p>';
+                resultsContainer.innerHTML = '<p class="error">Please enter a search term</p>';
                 return;
             }
             
-            resultsContainer.innerHTML = '<p class="loading">Buscando acciones en los mercados globales...</p>';
+            resultsContainer.innerHTML = '<p class="loading">Searching for stocks in global markets...</p>';
             
             try {
                 const stocks = await getStockSymbols(searchInput);
@@ -619,15 +619,15 @@
                 if (stocks.length > 0) {
                     let html = '';
                     
-                    // Procesar cada stock para obtener el precio
+                    // Process each stock to get the price
                     for (let i = 0; i < stocks.length; i++) {
                         const stock = stocks[i];
                         try {
-                            // Hacer la llamada a la API para obtener el precio
+                            // Make the API call to get the price
                             const priceResponse = await fetch(`/api/price/${stock.symbol}`);
                             
                             if (!priceResponse.ok) {
-                                throw new Error(`Error ${priceResponse.status} al obtener precio`);
+                                throw new Error(`Error ${priceResponse.status} getting price`);
                             }
                             
                             const priceData = await priceResponse.json();
@@ -649,14 +649,14 @@
                                 <div class="stock-details">
                                     <span class="stock-exchange">${stock.exchange}</span>
                                     <span class="market-status ${priceData.isMarketOpen ? 'open' : 'closed'}">
-                                        ${priceData.isMarketOpen ? '🟢 Abierto' : '🔴 Cerrado'}
+                                        ${priceData.isMarketOpen ? '🟢 Open' : '🔴 Closed'}
                                     </span>
                                 </div>
                             </div>
                             `;
                         } catch (priceError) {
-                            // Si hay error al obtener el precio, mostrar el stock sin precio
-                            console.error(`Error obteniendo precio para ${stock.symbol}:`, priceError);
+                            // If there's an error getting the price, show the stock without price
+                            console.error(`Error getting price for ${stock.symbol}:`, priceError);
                             html += `
                             <div class="stock-item" onclick="selectStock('${stock.symbol}')" style="animation-delay: ${i * 0.1}s">
                                 <div class="stock-info">
@@ -665,7 +665,7 @@
                                         <span class="stock-name">${stock.instrument_name || stock.name}</span>
                                     </div>
                                     <div class="stock-price-info">
-                                        <span class="stock-price">Precio no disponible</span>
+                                        <span class="stock-price">Price not available</span>
                                     </div>
                                 </div>
                                 <div class="stock-details">
@@ -679,7 +679,7 @@
                     
                     resultsContainer.innerHTML = html;
                 } else {
-                    resultsContainer.innerHTML = '<p class="error">No se encontraron resultados para su búsqueda. Intente con otros términos.</p>';
+                    resultsContainer.innerHTML = '<p class="error">No results found for your search. Try with other terms.</p>';
                 }
             } catch (error) {
                 resultsContainer.innerHTML = `<p class="error">Error: ${error.message}</p>`;
@@ -687,24 +687,24 @@
         }
 
         function selectStock(symbol) {
-            console.log(`Stock seleccionado: ${symbol}`);
-            // Aquí puedes redirigir a otra página o mostrar más detalles
+            console.log(`Selected stock: ${symbol}`);
+            // Here you can redirect to another page or show more details
             window.location.href = `/analyse/historic?stock=${encodeURIComponent(symbol)}`;
         }
 
-        // Permitir búsqueda al presionar Enter
+        // Allow search when pressing Enter
         document.getElementById('stockSearch').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchStocks();
             }
         });
 
-        // Efecto de enfoque automático
+        // Auto-focus effect
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('stockSearch').focus();
         });
 
-        // Animación suave para el botón de búsqueda
+        // Smooth animation for the search button
         document.querySelector('.search-btn').addEventListener('click', function() {
             this.style.transform = 'scale(0.95)';
             setTimeout(() => {
