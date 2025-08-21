@@ -101,9 +101,8 @@ app.get('/analyse', requireAuth, (req, res) => {
 });
 
 app.get('/analyse/historic', requireAuth, (req, res) => {
-    res.render('historic', {
-        user: req.session.user
-    });
+  const stock = req.query.stock || 'IBM'; // Valor por defecto 'IBM'
+  res.render('historic', { stock: stock, user : req.session.user });
 });
 
 // Ruta para renderizar la plantilla de assets de un portfolio específico
@@ -252,59 +251,6 @@ app.post("/db/login", async (req, res) => {
 });
 
 
-// app.post("/db/register", async (req, res) => {
-//   const { username, password, email } = req.body;
-
-//   // Validación
-//   if(!username || !password || !email){
-//     return res.status(400).json({
-//       success: false,
-//       message: "Username, password and email is required to register"
-//     });
-//   }
-
-//   try {
-//     const connection = await pool.getConnection();
-    
-//     // Verificar usuario existente (con await)
-//     const [existingUsers] = await connection.query(
-//       'SELECT * FROM users WHERE username = ? OR email = ?',
-//       [username, email]
-//     );
-
-//     if(existingUsers.length > 0){
-//       connection.release();
-//       return res.status(409).json({
-//         success: false,
-//         message: "Username or email is already registered"
-//       });
-//     }
-
-//     // Insertar nuevo usuario (3 ? para 3 valores)
-//     const [result] = await connection.query(
-//       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
-//       [username, password, email]
-//     );
-
-//     connection.release();
-
-
-//     return res.status(201).json({
-//       success: true,
-//       message: "User has been added successfully",
-//       userId: result.insertId
-//     });
-
-//   } catch(err) {
-//     console.error("Registration error:", err);
-//     return res.status(500).json({
-//       success: false,  // Corregido a false
-//       message: "Error during register",
-//       error: err.message
-//     });
-//   }
-// });
-
 app.post("/db/register", async (req, res) => {
   const { username, password, email } = req.body;
 
@@ -316,59 +262,27 @@ app.post("/db/register", async (req, res) => {
     });
   }
 
-  // Validación de email
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide a valid email address"
-    });
-  }
-
-  // Validación de fortaleza de password
-  if (password.length < 6) {
-    return res.status(400).json({
-      success: false,
-      message: "Password must be at least 6 characters long"
-    });
-  }
-
   try {
     const connection = await pool.getConnection();
     
-    // Verificar usuario existente
+    // Verificar usuario existente (con await)
     const [existingUsers] = await connection.query(
       'SELECT * FROM users WHERE username = ? OR email = ?',
       [username, email]
     );
 
-    if(existingUsers.length > 0){
-      connection.release();
-      
-      // Detectar específicamente qué existe
-      const usernameExists = existingUsers.some(user => user.username === username);
-      const emailExists = existingUsers.some(user => user.email === email);
-      
-      let message = "Registration failed";
-      if (usernameExists && emailExists) {
-        message = "Username and email are already registered";
-      } else if (usernameExists) {
-        message = "Username is already taken";
-      } else if (emailExists) {
-        message = "Email is already registered";
-      }
+    console.log(existingUsers);
 
+    if(existingUsers.length > 0){
+      console.log("ENTRO A ESTE PUNTO");  
+      connection.release();
       return res.status(409).json({
         success: false,
-        message: message,
-        conflict: {
-          username: usernameExists,
-          email: emailExists
-        }
+        message: "Username or email is already registered"
       });
     }
 
-    // Insertar nuevo usuario
+    // Insertar nuevo usuario (3 ? para 3 valores)
     const [result] = await connection.query(
       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
       [username, password, email]
@@ -376,63 +290,153 @@ app.post("/db/register", async (req, res) => {
 
     connection.release();
 
-    // Crear sesión automáticamente después del registro
-    req.session.user = {
-      id: result.insertId,
-      username: username,
-      email: email,
-      loggedIn: true,
-      loginTime: new Date(),
-      isNewUser: true // Bandera para identificar usuario recién registrado
-    };
 
-    // Guardar la sesión
-    req.session.save((err) => {
-      if (err) {
-        console.error('Session save error:', err);
-        // Aún así responder éxito pero con advertencia de sesión
-        return res.status(201).json({
-          success: true,
-          message: "User registered successfully but session creation failed",
-          userId: result.insertId,
-          warning: "Please login manually"
-        });
-      }
-
-      // Respuesta exitosa con datos de sesión
-      return res.status(201).json({
-        success: true,
-        message: "User registered and logged in successfully",
-        user: {
-          id: result.insertId,
-          username: username,
-          email: email
-        },
-        sessionCreated: true
-      });
+    return res.status(201).json({
+      success: true,
+      message: "User has been added successfully",
+      userId: result.insertId
     });
 
   } catch(err) {
     console.error("Registration error:", err);
-    
-    // Manejar errores específicos de base de datos
-    if (err.code === 'ER_DUP_ENTRY') {
-      return res.status(409).json({
-        success: false,
-        message: "Username or email already exists",
-        error: "Duplicate entry"
-      });
-    }
-    
     return res.status(500).json({
-      success: false,
-      message: "Error during registration",
-      error: process.env.NODE_ENV === 'development' ? err.message : "Internal server error"
+      success: false,  // Corregido a false
+      message: "Error during register",
+      error: err.message
     });
   }
 });
 
+// app.post("/db/register", async (req, res) => {
+//   const { username, password, email } = req.body;
+
+//   // Validación
+//   if(!username || !password || !email){
+//     return res.status(400).json({
+//       success: false,
+//       message: "Username, password and email is required to register"
+//     });
+//   }
+
+//   // Validación de email
+//   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+//   if (!emailRegex.test(email)) {
+//     return res.status(400).json({
+//       success: false,
+//       message: "Please provide a valid email address"
+//     });
+//   }
+
+//   // Validación de fortaleza de password
+//   if (password.length < 6) {
+//     return res.status(400).json({
+//       success: false,
+//       message: "Password must be at least 6 characters long"
+//     });
+//   }
+
+//   try {
+//     const connection = await pool.getConnection();
+    
+//     // Verificar usuario existente
+//     const [existingUsers] = await connection.query(
+//       'SELECT * FROM users WHERE username = ? OR email = ?',
+//       [username, email]
+//     );
+
+//     if(existingUsers.length > 0){
+//       connection.release();
+      
+//       // Detectar específicamente qué existe
+//       const usernameExists = existingUsers.some(user => user.username === username);
+//       const emailExists = existingUsers.some(user => user.email === email);
+      
+//       let message = "Registration failed";
+//       if (usernameExists && emailExists) {
+//         message = "Username and email are already registered";
+//       } else if (usernameExists) {
+//         message = "Username is already taken";
+//       } else if (emailExists) {
+//         message = "Email is already registered";
+//       }
+
+//       return res.status(409).json({
+//         success: false,
+//         message: message,
+//         conflict: {
+//           username: usernameExists,
+//           email: emailExists
+//         }
+//       });
+//     }
+
+//     // Insertar nuevo usuario
+//     const [result] = await connection.query(
+//       'INSERT INTO users (username, password, email) VALUES (?, ?, ?)',
+//       [username, password, email]
+//     );
+
+//     connection.release();
+
+//     // Crear sesión automáticamente después del registro
+//     req.session.user = {
+//       id: result.insertId,
+//       username: username,
+//       email: email,
+//       loggedIn: true,
+//       loginTime: new Date(),
+//       isNewUser: true // Bandera para identificar usuario recién registrado
+//     };
+
+//     // Guardar la sesión
+//     req.session.save((err) => {
+//       if (err) {
+//         console.error('Session save error:', err);
+//         // Aún así responder éxito pero con advertencia de sesión
+//         return res.status(201).json({
+//           success: true,
+//           message: "User registered successfully but session creation failed",
+//           userId: result.insertId,
+//           warning: "Please login manually"
+//         });
+//       }
+
+//       // Respuesta exitosa con datos de sesión
+//       return res.status(201).json({
+//         success: true,
+//         message: "User registered and logged in successfully",
+//         user: {
+//           id: result.insertId,
+//           username: username,
+//           email: email
+//         },
+//         sessionCreated: true
+//       });
+//     });
+
+//   } catch(err) {
+//     console.error("Registration error:", err);
+    
+//     // Manejar errores específicos de base de datos
+//     if (err.code === 'ER_DUP_ENTRY') {
+//       return res.status(409).json({
+//         success: false,
+//         message: "Username or email already exists",
+//         error: "Duplicate entry"
+//       });
+//     }
+    
+//     return res.status(500).json({
+//       success: false,
+//       message: "Error during registration",
+//       error: process.env.NODE_ENV === 'development' ? err.message : "Internal server error"
+//     });
+//   }
+// });
+
 // Cambiar riesgo
+
+
 app.post("/db/change-risk", async (req, res) => {
   const { risk, userId } = req.body;
 
@@ -871,11 +875,11 @@ app.post("/db/buy-asset",async (req, res) => {
         const { userId, portfolioId, assetSymbol, quantity, price } = req.body;
         
         // Validaciones
-        if (!userId || !portfolioId || !assetSymbol || !quantity || !price) {
+        if (!userId || !portfolioId || !assetSymbol ){//|| !quantity || !price) {
             return res.status(400).json({ error: 'Todos los campos son requeridos' });
         }
 
-        if (quantity <= 0 || price <= 0) {
+        if (quantity < 0 || price < 0) {
             return res.status(400).json({ error: 'Cantidad y precio deben ser positivos' });
         }
 

@@ -689,7 +689,7 @@
         function selectStock(symbol) {
             console.log(`Stock seleccionado: ${symbol}`);
             // Aquí puedes redirigir a otra página o mostrar más detalles
-            // window.location.href = `stock-details.html?symbol=${encodeURIComponent(symbol)}`;
+            window.location.href = `/analyse/historic?stock=${encodeURIComponent(symbol)}`;
         }
 
         // Permitir búsqueda al presionar Enter

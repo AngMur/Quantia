@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Quantia</title>
+  <meta charset="UTF-8">
+  <title>Gráfica de Velas - Datos de IBM</title>
+  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="stylesheet" href="/styles/login-register.css">
-    <style>
-        /* Tus estilos actuales */
+  <style>
+            /* Tus estilos actuales */
         .header {
             width: 100%;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(60, 57, 94, 0.827);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding: 15px 0;
@@ -189,11 +189,363 @@
             left: 22px;
         }
     </style>
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+  <style>
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+       background: rgb(255, 255, 255);
+    border: 0.125rem solid var(--color-light-shadow);
+    backdrop-filter: blur(1.25rem);
+      
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    
+    .title-container {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #ffffff;
+    }
+    
+    h2 {
+      color: #525252;
+      margin-bottom: 5px;
+    }
+    .symbol-info {
+      color: #7f8c8d;
+      font-size: 1.1em;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .time-filters {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .chart-type {
+      display: flex;
+      gap: 10px;
+    }
+    .time-btn, .chart-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      background: #ecf0f1;
+      color: #34495e;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .time-btn:hover, .chart-btn:hover {
+      background: #3498db;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+     .buy-btn {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 20px;
+      background: #09c322;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .buy-btn:hover {
+      background: #0dda22;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+    .time-btn.active, .chart-btn.active {
+      background: #2980b9;
+      color: white;
+    }
+    .time-btn.loading {
+      position: relative;
+      color: transparent;
+    }
+    .time-btn.loading::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin: -8px 0 0 -8px;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #chart {
+      margin-top: 20px;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      font-style: italic;
+      color: #7f8c8d;
+      font-size: 1.2em;
+    }
+    .error {
+      text-align: center;
+      padding: 20px;
+      color: #c0392b;
+      background-color: #f9ebea;
+      border-radius: 8px;
+      margin: 20px auto;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .stat-box {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      min-width: 150px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    }
+    .stat-value {
+      font-size: 1.4em;
+      font-weight: bold;
+      color: #2980b9;
+    }
+    .stat-label {
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+    .up {
+      color: #27ae60;
+    }
+    .down {
+      color: #c0392b;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 25px;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+    .tooltip-value {
+      font-weight: bold;
+    }
+    .market-info {
+      text-align: center;
+      margin: 10px 0;
+      color: #7f8c8d;
+      font-size: 0.9em;
+    }
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .time-filters, .chart-type {
+        justify-content: center;
+      }
+    }
+  </style>
+
+  <style>
+            
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 25px;
+        }
+        
+        .portfolio-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+        
+        .portfolio-item {
+            padding: 15px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .portfolio-item:hover {
+            border-color: #3b82f6;
+            background-color: #f0f7ff;
+        }
+        
+        .portfolio-item.selected {
+            border-color: #3b82f6;
+            background-color: #e0f2fe;
+        }
+        
+        .portfolio-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .portfolio-value {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            background-color: #f9fafb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-cancel {
+            background: white;
+            border: 1px solid #d1d5db;
+            color: #4b5563;
+        }
+        
+        .btn-cancel:hover {
+            background: #f9fafb;
+        }
+        
+        .btn-confirm {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+        }
+        
+        .btn-confirm:hover {
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-confirm:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+            color: #6b7280;
+        }
+        
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+    </style>
+  </style>
 </head>
 <body>
-    
-    <header class="header">
+  
+      <header class="header">
         <div class="nav-container">
         <div class="logo"><a href="/">Quantia</a></div>
         <div class="search-container">
@@ -207,7 +559,751 @@
         <div class="toggle-switch" id="accessibilitySwitch"></div>
         </div>
     </header>
+
     
+    <!-- Modal para seleccionar portafolio -->
+    <div class="modal-overlay" id="portfolioModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Seleccionar Portafolio</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <ul class="portfolio-list" id="portfolioList">
+                    <!-- Los portafolios se cargarán aquí con JavaScript -->
+                </ul>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-cancel" id="cancelSelection">Cancelar</button>
+                <button class="btn btn-confirm" id="confirmSelection" disabled>Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+  <div class="container">
+    <div class="title-container">
+      <h2>Analasis historico</h2>
+      <div class="symbol-info" id="symbolInfo">Cargando datos...</div>
+      <div id="marketInfo" class="market-info"></div>
+        <button class="buy-btn" id="openPortfolioModal">Buy</button>
+
+    </div>
+
+    <div class="controls">
+      <div class="time-filters">
+        <button class="time-btn" data-days="1">1 Día</button>
+        <button class="time-btn" data-days="5">5 Días</button>
+        <button class="time-btn active" data-days="30">1 Mes</button>
+        <button class="time-btn" data-days="365">1 Año</button>
+        <button class="time-btn" data-days="max">Máximo</button>
+      </div>
+      
+      <div class="chart-type">
+        <button class="chart-btn" data-type="candlestick">Velas</button>
+        <button class="chart-btn active" data-type="line">Lineal</button>
+      </div>
+    </div>
+
+    <div id="chart">
+      <div class="loading">Cargando datos...</div>
+    </div>
+
+    <div class="stats" id="statsContainer">
+      <!-- Las estadísticas se generarán dinámicamente -->
+    </div>
+
+    <div class="footer">
+      <p>Gráfico de velas - Datos históricos de precios | Actualizado: <span id="updateDate"></span></p>
+    </div>
+  </div>
+
+  <script>
+    let chart;
+    let allData = [];
+    let currentRange = '30';
+    let chartType = 'line';
+    const stockSymbol = '<%= stock %>';
+    let modoDaltonico = false;
+    
+
+    // Establecer fecha de actualización
+    document.getElementById('updateDate').textContent = new Date().toLocaleDateString('es-ES', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    // Cargar datos históricos de la API
+    fetch(`/api/historical/${stockSymbol}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la respuesta de la API: ' + response.status);
+        }
+        return response.json();
+      })
+      .then(data => {
+        // Eliminar mensaje de carga
+        document.querySelector('#chart').innerHTML = '';
+        
+        // Guardar todos los datos
+        allData = data.ohlc;
+        
+        // Cargar datos del día actual por defecto
+        filterHistoricalData(currentRange);
+        
+        // Actualizar la información del símbolo
+        document.getElementById('symbolInfo').textContent = `Símbolo: ${data.symbol} | ${allData.length} períodos de datos`;
+      })
+      .catch(err => {
+        console.error("Error cargando datos históricos:", err);
+        document.querySelector('#chart').innerHTML = 
+          `<div class="error">Error al cargar los datos: ${err.message}. Asegúrate de que la API está ejecutándose en localhost:5000</div>`;
+      });
+
+    // Añadir event listeners a los botones de rango temporal
+    document.querySelectorAll('.time-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        // Remover clase active de todos los botones
+        document.querySelectorAll('.time-btn').forEach(btn => {
+          btn.classList.remove('active');
+          btn.classList.remove('loading');
+        });
+        
+        // Añadir clase active al botón clickeado
+        this.classList.add('active');
+        
+        // Obtener el rango seleccionado
+        const range = this.getAttribute('data-days');
+        currentRange = range;
+        
+        // Si es 1 día, cargar datos en tiempo real
+        if (range === '1') {
+          this.classList.add('loading');
+          loadTodayData();
+        } else {
+          // Para otros rangos, usar datos históricos
+          filterHistoricalData(range);
+        }
+      });
+    });
+
+    // Añadir event listeners a los botones de tipo de gráfico
+    document.querySelectorAll('.chart-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        // Remover clase active de todos los botones
+        document.querySelectorAll('.chart-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        
+        // Añadir clase active al botón clickeado
+        this.classList.add('active');
+        
+        // Obtener el tipo de gráfico seleccionado
+        chartType = this.getAttribute('data-type');
+        
+        // Volver a renderizar el gráfico con el nuevo tipo
+        if (currentRange === '1') {
+          loadTodayData();
+        } else {
+          filterHistoricalData(currentRange);
+        }
+      });
+    });
+
+    // Función para cargar datos del día actual
+    function loadTodayData() {
+      fetch(`/api/today/${stockSymbol}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la respuesta de la API: ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          // Quitar estado de carga del botón
+          const loadingBtn = document.querySelector('.time-btn.loading');
+          if (loadingBtn) loadingBtn.classList.remove('loading');
+          
+          // Mostrar información del mercado
+          document.getElementById('marketInfo').innerHTML = `
+            Mercado abierto: ${new Date(data.marketOpen).toLocaleDateString('es-ES')} | 
+            Última actualización: ${new Date(data.lastUpdate).toLocaleTimeString('es-ES')} |
+            Intervalo: ${data.interval}
+          `;
+          
+          // Verificar si hay datos
+          if (!data.dataPoints || data.dataPoints.length === 0) {
+            document.querySelector('#chart').innerHTML = 
+              '<div class="error">No hay datos disponibles para hoy</div>';
+            document.getElementById('statsContainer').innerHTML = '';
+            return;
+          }
+          
+          // Convertir dataPoints a formato OHLC
+          const ohlcData = data.dataPoints.map(point => {
+            return {
+              date: point.date,
+              open: point.open,
+              high: point.high,
+              low: point.low,
+              close: point.close,
+              volume: point.volume
+            };
+          });
+          
+          // Renderizar el gráfico y estadísticas
+          renderChart(ohlcData);
+          updateStats(ohlcData);
+        })
+        .catch(err => {
+          console.error("Error cargando datos del día:", err);
+          const loadingBtn = document.querySelector('.time-btn.loading');
+          if (loadingBtn) loadingBtn.classList.remove('loading');
+          document.querySelector('#chart').innerHTML = 
+            `<div class="error">Error al cargar datos del día: ${err.message}</div>`;
+        });
+    }
+
+    // Función para filtrar datos históricos
+    function filterHistoricalData(range) {
+      let filteredData = [];
+      
+      if (range === 'max') {
+        filteredData = allData;
+      } else {
+        const days = parseInt(range);
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - days);
+        
+        filteredData = allData.filter(item => {
+          return new Date(item.date) >= cutoffDate;
+        });
+      }
+      
+      // Ocultar información del mercado para datos históricos
+      document.getElementById('marketInfo').innerHTML = '';
+      
+      // Actualizar el gráfico y las estadísticas
+      renderChart(filteredData);
+      updateStats(filteredData);
+    }
+
+    // Función para formatear números a 2 decimales
+    function formatToTwoDecimals(value) {
+      return parseFloat(value.toFixed(2));
+    }
+
+    // Función para renderizar gráfica
+    function renderChart(ohlcData) {
+      // Verificar que hay datos
+      if (!ohlcData || ohlcData.length === 0) {
+        document.querySelector('#chart').innerHTML = 
+          '<div class="error">No hay datos disponibles para el rango seleccionado</div>';
+        return;
+      }
+      
+      // Ordenar los datos por fecha (más antiguo a más reciente)
+      ohlcData.sort((a, b) => new Date(a.date) - new Date(b.date));
+      
+      let seriesData;
+      let seriesConfig;
+      
+      if (chartType === 'candlestick') {
+        // Preparar datos para gráfico de velas - FORMATO CORREGIDO
+        seriesData = ohlcData.map(d => {
+          return {
+            x: new Date(d.date),
+            y: [
+              formatToTwoDecimals(d.open),
+              formatToTwoDecimals(d.high),
+              formatToTwoDecimals(d.low),
+              formatToTwoDecimals(d.close)
+            ]
+          };
+        });
+        
+        seriesConfig = [{
+          name: 'Precio',
+          type: 'candlestick',
+          data: seriesData
+        }];
+      } else {
+        // Preparar datos para gráfico lineal (usamos el precio de cierre)
+        seriesData = ohlcData.map(d => {
+          return {
+            x: new Date(d.date),
+            y: formatToTwoDecimals(d.close)
+          };
+        });
+        
+        seriesConfig = [{
+          name: 'Precio de Cierre',
+          type: 'line',
+          data: seriesData
+        }];
+      }
+
+      const lastClose = formatToTwoDecimals(ohlcData[ohlcData.length - 1].close);
+      const firstOpen = formatToTwoDecimals(ohlcData[0].open);
+      
+      const titleText = currentRange === '1' 
+        ? `IBM - Precios de hoy (${ohlcData.length} períodos)` 
+        : `IBM - Precios históricos (${ohlcData.length} períodos)`;
+      
+      const options = {
+        chart: {
+          type:  'line',
+          height: 500,
+          animations: {
+            enabled: false
+          },
+          toolbar: {
+            show: true,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true
+            }
+          },
+          events: {
+            // Capturar errores en el gráfico
+            mounted: function(ctx, config) {
+              console.log('Gráfico montado correctamente');
+            },
+            updated: function(ctx, config) {
+              console.log('Gráfico actualizado correctamente');
+            },
+            // Manejar errores
+            error: function(err) {
+              console.error('Error en el gráfico:', err);
+              document.querySelector('#chart').innerHTML = 
+                '<div class="error">Error al renderizar el gráfico. Intentando con gráfico lineal...</div>';
+              // Intentar con gráfico lineal como fallback
+              if (chartType === 'candlestick') {
+                chartType = 'line';
+                document.querySelector('.chart-btn[data-type="line"]').click();
+              }
+            }
+          }
+        },
+        series: seriesConfig,
+        xaxis: {
+          type: 'datetime',
+          labels: {
+            datetimeFormatter: {
+                day: 'dd MMM',
+                month: 'MMM yyyy',
+                hour: 'HH:mm'
+            }
+          }
+        },
+        yaxis: {
+          tooltip: {
+            enabled: true
+          },
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(2);
+            }
+          }
+        },
+        plotOptions: {
+          candlestick: {
+            colors: {
+              upward: '#27ae60',
+              downward: '#c0392b'
+            },
+            wick: {
+              useFillColor: true
+            }
+          }
+        },
+        stroke: {
+          width: chartType === 'line' ? 3 : undefined
+        },
+        colors: chartType === 'line' ? ['#2980b9'] : undefined,
+        tooltip: {
+          x: {
+            format: currentRange === '1' ? 'HH:mm' : 'dd MMM yyyy HH:mm'
+          },
+          y: {
+            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+              if (chartType === 'candlestick') {
+                // Verificar que los datos existen antes de acceder a ellos
+                if (w && w.config && w.config.series && w.config.series[seriesIndex] && 
+                    w.config.series[seriesIndex].data && w.config.series[seriesIndex].data[dataPointIndex] &&
+                    w.config.series[seriesIndex].data[dataPointIndex].y) {
+                  const points = w.config.series[seriesIndex].data[dataPointIndex].y;
+                  return `
+                    <div class="tooltip-value">Apertura: $${points[0].toFixed(2)}</div>
+                    <div class="tooltip-value">Máximo: $${points[1].toFixed(2)}</div>
+                    <div class="tooltip-value">Mínimo: $${points[2].toFixed(2)}</div>
+                    <div class="tooltip-value">Cierre: $${points[3].toFixed(2)}</div>
+                  `;
+                } else {
+                  return `<div class="tooltip-value">Cierre: $${value.toFixed(2)}</div>`;
+                }
+              } else {
+                return `<div class="tooltip-value">Cierre: $${value.toFixed(2)}</div>`;
+              }
+            }
+          }
+        },
+        title: {
+          text: titleText,
+          align: 'left',
+          style: {
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#7f8c8d'
+          }
+        },
+        noData: {
+          text: 'No hay datos disponibles',
+          align: 'center',
+          verticalAlign: 'middle',
+          offsetX: 0,
+          offsetY: 0,
+          style: {
+            color: '#7f8c8d',
+            fontSize: '16px',
+            fontFamily: undefined
+          }
+        }
+      };
+
+         const options2 = {
+        chart: {
+          type: 'candlestick',
+          height: 500,
+          animations: {
+            enabled: false
+          },
+          toolbar: {
+            show: true,
+            tools: {
+              download: true,
+              selection: true,
+              zoom: true,
+              zoomin: true,
+              zoomout: true,
+              pan: true,
+              reset: true
+            }
+          }
+        },
+        series: [{
+          name: 'Precio',
+          data: seriesData
+        }],
+        xaxis: {
+          type: 'datetime',
+          labels: {
+            datetimeFormatter: {
+                day: 'dd MMM',
+                month: 'MMM yyyy',
+                hour: 'HH:mm'
+            }
+          }
+        },
+        yaxis: {
+          tooltip: {
+            enabled: true
+          },
+          labels: {
+            formatter: function(val) {
+              return val.toFixed(2);
+            }
+          }
+        },
+        plotOptions: {
+          candlestick: {
+            colors: {
+              upward: modoDaltonico == true ? 'red' : '#27ae60' , // Ganancias
+              downward: modoDaltonico == true ? 'black' : '#c0392b' //Perdidas
+            },
+            wick: {
+              useFillColor: true
+            }
+          }
+        },
+        tooltip: {
+          x: {
+            format: currentRange === '1' ? 'HH:mm' : 'dd MMM yyyy HH:mm'
+          },
+          y: {
+            formatter: function(value, { seriesIndex, dataPointIndex, w }) {
+              const points = w.config.series[seriesIndex].data[dataPointIndex].y;
+              return `
+                <div class="tooltip-value">Apertura: $${points[0].toFixed(2)}</div>
+                <div class="tooltip-value">Máximo: $${points[1].toFixed(2)}</div>
+                <div class="tooltip-value">Mínimo: $${points[2].toFixed(2)}</div>
+                <div class="tooltip-value">Cierre: $${points[3].toFixed(2)}</div>
+              `;
+            }
+          }
+        },
+        title: {
+          text: titleText,
+          align: 'left',
+          style: {
+            fontSize: '16px',
+            fontWeight: 'bold',
+            color: '#fff'
+          }
+        }
+      };
+
+      
+      try {
+        if (chart) {
+            const option_chart = chartType == "line" ? options : options2;
+          chart.updateOptions(option_chart);
+          chart.updateSeries(seriesConfig);
+        } else {
+          chart = new ApexCharts(document.querySelector("#chart"), options);
+          chart.render();
+        }
+      } catch (error) {
+        console.error('Error al renderizar el gráfico:', error);
+        document.querySelector('#chart').innerHTML = 
+          '<div class="error">Error al renderizar el gráfico. Intentando con gráfico lineal...</div>';
+        // Intentar con gráfico lineal como fallback
+        if (chartType === 'candlestick') {
+          chartType = 'line';
+          document.querySelector('.chart-btn[data-type="line"]').click();
+        }
+      }
+    }
+    
+    // Función para actualizar las estadísticas
+    function updateStats(ohlcData) {
+      if (!ohlcData || ohlcData.length === 0) return;
+      
+      const first = ohlcData[0];
+      const last = ohlcData[ohlcData.length - 1];
+      
+      // Calcular cambios
+      const change = formatToTwoDecimals(last.close - first.open);
+      const changePercent = formatToTwoDecimals((change / first.open) * 100);
+      
+      // Encontrar máximo y mínimo en el período
+      let max = Number.MIN_VALUE;
+      let min = Number.MAX_VALUE;
+      
+      ohlcData.forEach(item => {
+        if (item.high > max) max = item.high;
+        if (item.low < min) min = item.low;
+      });
+      
+      max = formatToTwoDecimals(max);
+      min = formatToTwoDecimals(min);
+      
+      const statsHTML = `
+        <div class="stat-box">
+          <div class="stat-label">Precio Actual</div>
+          <div class="stat-value">$${formatToTwoDecimals(last.close).toFixed(2)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Cambio</div>
+          <div class="stat-value ${change >= 0 ? 'up' : 'down'}">${change >= 0 ? '+' : ''}${change.toFixed(2)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">% Cambio</div>
+          <div class="stat-value ${changePercent >= 0 ? 'up' : 'down'}">${changePercent >= 0 ? '+' : ''}${changePercent.toFixed(2)}%</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Máximo</div>
+          <div class="stat-value">$${max.toFixed(2)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Mínimo</div>
+          <div class="stat-value">$${min.toFixed(2)}</div>
+        </div>
+      `;
+      
+      document.getElementById('statsContainer').innerHTML = statsHTML;
+    }
+  </script>
+
+    <script>
+      let currentUser = <%- JSON.stringify(user || null) %>;
+        const userId = currentUser.id;
+        // Datos de ejemplo para los portafolios
+        let samplePortfolios = null;
+;
+        // Variables globales
+        let selectedPortfolioId = null;
+
+        // Elementos del DOM
+        const openModalBtn = document.getElementById('openPortfolioModal');
+        const modalOverlay = document.getElementById('portfolioModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelSelection');
+        const confirmBtn = document.getElementById('confirmSelection');
+        const portfolioList = document.getElementById('portfolioList');
+
+
+        async function getPortfolios (userId) {
+  try {
+    const response = await fetch(`/db/portfolios/${userId}`);
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    const data = await response.json();
+    // samplePortfolios = data.portfolios;
+    return data.portfolios;
+  } catch (error) {
+    console.error('Error al obtener samplePortafolios:', error);
+    throw error;
+  }
+};
+
+
+        // Función para formatear moneda
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+async function renderPortfolios() {
+    try {
+        const response = await fetch(`/db/portfolios/${userId}`);
+    if (!response.ok) {
+      throw new Error(`Error HTTP: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log(data.data.portfolios);
+    const samplePortfolios = data.data.portfolios;
+        if (samplePortfolios.length === 0) {
+            portfolioList.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📂</div>
+                    <p>No hay portafolios disponibles</p>
+                </div>
+            `;
+            return;
+        }
+
+        portfolioList.innerHTML = samplePortfolios.map(portfolio => `
+            <li class="portfolio-item" onclick="selectPort(${portfolio.portfolio_id})">
+                <div>
+                    <div class="portfolio-name">${portfolio.name}</div>
+                    <div class="portfolio-value">${formatCurrency(portfolio.total_invested)}</div>
+                </div>
+                <div>→</div>
+            </li>
+        `).join('');
+    } catch (error) {
+        console.error('Error al renderizar portafolios:', error);
+        portfolioList.innerHTML = `
+            <div class="error-state">
+                <div class="error-icon">⚠️</div>
+                <p>Error al cargar los portafolios</p>
+            </div>
+        `;
+    }
+}
+        // Función para abrir el modal
+        function openModal() {
+            modalOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Función para cerrar el modal
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Resetear selección
+            selectedPortfolioId = null;
+            confirmBtn.disabled = true;
+            
+            // Remover selección visual
+            document.querySelectorAll('.portfolio-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+        }
+
+        // Función para confirmar la selección
+        function confirmSelection() {
+            if (!selectedPortfolioId) return;
+            
+            const selectedPortfolio = samplePortfolios.find(p => p.id == selectedPortfolioId);
+            alert(`Has seleccionado el portafolio: ${selectedPortfolio.name}`);
+            
+            // Aquí podrías redirigir a la página de compra o realizar otra acción
+            closeModal();
+        }
+
+async function selectPort(id) {
+  console.log(id);
+    selectedPortfolioId = id;
+    closeModal();
+    console.log(JSON.stringify({
+                userId: userId,
+                portfolioId: id,
+                assetSymbol: stockSymbol,
+                quantity: 1,
+                price: 0
+            }));
+    try {
+        const response = await fetch('/db/buy-asset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userId: userId,
+                portfolioId: id,
+                assetSymbol: stockSymbol,
+                quantity: 1,
+                price: 0
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (response.ok) {
+            alert('Compra realizada:', result.message);
+             const redirectUrl = '/portfolio/assets/' + id;
+              window.location.href = redirectUrl;
+            // Aquí puedes agregar lógica adicional después de una compra exitosa
+        } else {
+            alert('Error en compra:', result.error);
+            // Manejar el error (mostrar mensaje al usuario, etc.)
+        }
+    } catch (error) {
+        console.error('Error de conexión:', error);
+    }
+}
+
+        // Event Listeners
+        openModalBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        confirmBtn.addEventListener('click', confirmSelection);
+
+        // Cerrar modal al hacer clic fuera del contenido
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        // Inicializar la lista de portafolios
+        renderPortfolios();
+    </script>
+
 
 </body>
 </html>

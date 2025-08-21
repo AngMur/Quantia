@@ -55,7 +55,7 @@
 
         .search-container {
             flex: 1;
-            min-width: 31.25rem;
+            min-width: 500px;
             margin: 0 10px;
             position: relative;
         }
@@ -258,12 +258,21 @@
             color: #fff;
         }
 
-        .trending-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        .minichart-container {
+            width: 100%;
+            max-width: none; /* better than 100% */
+            margin: 0;
+            padding: 0;
         }
 
+        .chart-container {
+            width: 100% !important;
+            height: auto !important;
+            min-height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+        
         .trending-card {
             background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
@@ -634,11 +643,11 @@
                 flex-direction: column;
                 gap: 20px;
             }
-/* 
-            .search-container {
-                max-width: 2rem;
-            } */
 
+            .search-container {
+                max-width: 100%;
+                margin: 0;
+            }
 
             .hero-title {
                 font-size: 36px;
@@ -777,6 +786,40 @@
         background: #e9ecef;
         margin: 8px 0;
     }
+
+    .market-trends-and-recommendations {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Tendencias más ancho que recomendaciones */
+        gap: 30px;
+        margin-bottom: 40px;
+    }
+    
+    .recommendations-section {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+    }
+    
+    .f {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .recommendation-item {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .recommendation-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
 </style>
 
     <link rel="stylesheet" href="/styles/chart.css">
@@ -908,12 +951,12 @@
                 <div class="market-change positive">+3.21 (+0.67%)</div>
             </div>
         </section>
-
+<!-- 
+        
         <section class="trending-section">
             <h2 class="section-title">Tendencias del Mercado</h2>
             <div class="trending-grid" id="trending-grid">
                 <div class="minichart-container">
-                    <!-- IBM -->
                     <div class="minichart-header" >
                         <div class="stock-info">
                             <span class="stock-symbol" id="stockSymbol">IBM</span>
@@ -933,51 +976,40 @@
                     </div>
 
                 </div>
-                <!-- <div class="trending-card">
-                    <div class="asset-info">
-                        <div>
-                            <div class="asset-name">Tesla Inc.</div>
-                            <div class="asset-symbol">TSLA</div>
-                        </div>
-                        <div class="market-change positive">+4.23%</div>
-                    </div>
-                    <div class="mini-chart"></div>
-                </div>
-                
-                <div class="trending-card">
-                    <div class="asset-info">
-                        <div>
-                            <div class="asset-name">Ethereum</div>
-                            <div class="asset-symbol">ETH-USD</div>
-                        </div>
-                        <div class="market-change positive">+6.78%</div>
-                    </div>
-                    <div class="mini-chart"></div>
-                </div>
-                
-                <div class="trending-card">
-                    <div class="asset-info">
-                        <div>
-                            <div class="asset-name">Microsoft Corp.</div>
-                            <div class="asset-symbol">MSFT</div>
-                        </div>
-                        <div class="market-change negative">-1.23%</div>
-                    </div>
-                    <div class="mini-chart"></div>
-                </div> -->
-                
-                <!-- <div class="trending-card">
-                    <div class="asset-info">
-                        <div>
-                            <div class="asset-name">NVIDIA Corp.</div>
-                            <div class="asset-symbol">NVDA</div>
-                        </div>
-                        <div class="market-change positive">+8.91%</div>
-                    </div>
-                    <div class="mini-chart"></div>
-                </div> -->
             </div>
-        </section>
+        </section> -->
+
+        <div class="market-trends-and-recommendations">           
+            <section class="trending-section">
+                <h2 class="section-title">Tendencias del Mercado</h2>
+                <div class="minichart-container">
+                    <div class="minichart-header">
+                        <div class="stock-info">
+                            <span class="stock-symbol" id="stockSymbol">IBM</span>
+                            <span class="stock-interval" id="stockInterval">5m</span>
+                        </div>
+                        <div class="price-info">
+                            <div class="stock-price" id="currentPrice">-</div>
+                            <div class="stock-change" id="priceChange">-</div>
+                        </div>
+                    </div>
+                    <div class="chart-container" id="chartContainer">
+                        <div class="loading">Cargando datos iniciales...</div>
+                    </div>
+                    <div class="minichart-footer">
+                        Última actualización: <span id="lastUpdate">-</span>
+                        <div class="refresh-info">Próxima actualización en <span id="countdown">60</span> segundos</div>
+                    </div>
+                </div>
+            </section> 
+        
+            <section class="recommendations-section">
+                <h2 class="section-title">Top 10 Recomendaciones</h2>
+                <div class="recommendations-list" id="recommendationsList">
+                    <p style="color: rgba(255,255,255,0.6)">Cargando recomendaciones...</p>
+                </div>
+            </section>
+        </div>
 
         <section class="news-section">
             <h2 class="section-title">Noticias Financieras</h2>
@@ -1469,5 +1501,65 @@ document.addEventListener('click', function(event) {
     }
 });
     </script>
+
+    <script>
+        async function loadRecommendations() {
+            const list = document.getElementById("recommendationsList");
+            list.innerHTML = "<li class='recommendation-item'>⏳ Cargando recomendaciones...</li>";
+        
+            try {
+                const response = await fetch("http://172.30.1.55:8080/recommendations");
+                if (!response.ok) {
+                    throw new Error("Error HTTP " + response.status);
+                }
+        
+                const data = await response.json();
+        
+                if (!data.top_10_recommendations || data.top_10_recommendations.length === 0) {
+                    list.innerHTML = "<li class='recommendation-item'>❌ No hay recomendaciones disponibles</li>";
+                    return;
+                }
+        
+                // Pintar las recomendaciones
+                list.innerHTML = data.top_10_recommendations.map(rec => `
+                    <li class="recommendation-item" onclick="openAsset('${rec.ticker}')">
+                        <strong>${rec.ticker}</strong> - ${rec.name}
+                        <span style="float:right; color:#00d4ff">
+                            ${Math.round(rec.avg_allocation * 100)}%
+                        </span>
+                    </li>
+                `).join("");
+        
+                // Agregar info de performance
+                if (data.profit) {
+                    const rlAgent = Number(data.profit.rl_agent_final) || 0;
+                    const buyHold = Number(data.profit.buy_and_hold_final) || 0;
+                    const outperf = Number(data.profit.outperformance) || 0;
+                
+                    const info = document.createElement("div");
+                    info.style.marginTop = "15px";
+                    info.style.fontSize = "14px";
+                    info.style.color = "rgba(255,255,255,0.7)";
+                    info.innerHTML = `
+                        <p>🤖 RL Agent: $${rlAgent.toFixed(2)}</p>
+                        <p>📈 Buy & Hold: $${buyHold.toFixed(2)}</p>
+                        <p style="color:${outperf >= 0 ? '#00ff88':'#ff4757'}">
+                            🚀 Outperformance: $${outperf.toFixed(2)}
+                        </p>
+                        <p style="font-size:12px; opacity:0.8">Última actualización: ${data.as_of}</p>
+                    `;
+                    document.querySelector(".recommendations-section").appendChild(info);
+                }
+        
+            } catch (error) {
+                console.error("Error cargando recomendaciones:", error);
+                list.innerHTML = "<li class='recommendation-item'>❌ Error al cargar las recomendaciones</li>";
+            }
+        }
+        
+        // Ejecutar al cargar la página
+        document.addEventListener("DOMContentLoaded", loadRecommendations);
+        </script>
+        
 </body>
 </html>
