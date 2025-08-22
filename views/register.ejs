@@ -42,19 +42,31 @@
     </main>
 
     <script>
-   async function registerUser() {
+async function registerUser() {
     const username = document.getElementById('reg-username').value;
     const password = document.getElementById('reg-password').value;
     const email = document.getElementById('reg-email').value;
     
-    // Validación básica de campos
+    // Basic field validation
     if (!username || !password || !email) {
-        alert("Por favor, complete todos los campos.");
+        alert("Please complete all fields.");
         return;
     }
     
+    // Email validation with regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+    }
+
+    if(password.length <= 5){
+        alert("The password must be at least 6 characters long.");
+        return
+    }
+    
     try {
-        console.log("Enviando solicitud de registro...");
+        console.log("Sending registration request...");
         
         const response = await fetch('/db/register', {
             method: 'POST',
@@ -64,7 +76,7 @@
             body: JSON.stringify({ username, password, email })
         });
 
-        // Verificar el tipo de contenido de la respuesta
+        // Verify response content type
         const contentType = response.headers.get('content-type');
         let data;
         
@@ -72,43 +84,44 @@
             data = await response.json();
         } else {
             const text = await response.text();
-            throw new Error(`Respuesta inesperada del servidor: ${text.substring(0, 100)}`);
+            throw new Error(`Unexpected server response: ${text.substring(0, 100)}`);
         }
 
-        console.log("Respuesta recibida:", data);
+        console.log("Response received:", data);
 
         if (!response.ok) {
-            // Mostrar mensaje de error del servidor si existe
-            const errorMessage = data.message || data.error || 'Error desconocido en el registro';
-            alert(`Error: ${errorMessage}`);
-            throw new Error(errorMessage);
+            // Show server error message if available
+            const errorMessage = data.message || data.error || 'Unknown registration error';
+            alert(`${errorMessage}`);
+            return;
+            // throw new Error(errorMessage);
         }
         
-        // Verificar que tenemos un userId antes de redirigir
+        // Verify we have a userId before redirecting
         if (!data.userId) {
-            throw new Error("El servidor no devolvió un ID de usuario válido");
+            throw new Error("Server did not return a valid user ID");
         }
         
-        // Limpiar formulario
+        // Clear form
         document.getElementById('reg-username').value = '';
         document.getElementById('reg-password').value = '';
         document.getElementById('reg-email').value = '';
         
-        console.log("Registro exitoso. Redirigiendo al quiz con ID:", data.userId);
+        console.log("Registration successful. Redirecting to quiz with ID:", data.userId);
         
-        // Redirigir al quiz con el ID del usuario
+        // Redirect to quiz with user ID
         window.location.href = `/quiz?id=${data.userId}`;
 
     } catch (error) {
-        console.error('Error en registro:', error);
+        console.error('Registration error:', error);
         
-        // Mostrar mensaje de error apropiado
-        if (error.message.includes('Respuesta inesperada')) {
-            alert("Error de comunicación con el servidor. Por favor, intente nuevamente.");
-        } else if (error.message.includes('ID de usuario')) {
-            alert("Error en el registro. Por favor, contacte al administrador.");
+        // Show appropriate error message
+        if (error.message.includes('Unexpected server response')) {
+            alert("Server communication error. Please try again.");
+        } else if (error.message.includes('user ID')) {
+            alert("Registration error. Please contact the administrator.");
         } else {
-            alert("Error en el registro: " + error.message);
+            alert("Registration error: " + error.message);
         }
     }
 }
