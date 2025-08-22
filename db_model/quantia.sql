@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS portfolios (
     portfolio_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    name VARCHAR(100) NOT NULL,
+    name VARCHAR(100) NOT NULL DEFAULT 'Main portfolio',
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -70,15 +70,16 @@ CREATE TABLE IF NOT EXISTS portfolio_assets (
 
 -- Insertar algunos usuarios de ejemplo
 INSERT INTO users (username, password, email) VALUES 
-('admin', '12345', 'admin@example.com'),
+('angel_muratalla', '12345', 'admin@example.com'),
 ('maria_garcia', '12345', 'maria@example.com'),
 ('carlos_rojas', '12345', 'carlos@example.com');
 
 -- Insertar portafolios de ejemplo
 INSERT INTO portfolios (user_id, name, description) VALUES
-(1, 'Portafolio Principal', 'Mis inversiones principales'),
-(1, 'Portafolio Crypto', 'Inversiones en criptomonedas'),
-(2, 'Portafolio María', 'Inversiones de María García');
+(1, 'Main', 'Main'),
+(1, 'Cryptos', 'Criptos'),
+(2, 'Main', 'Main'),
+(3, 'Main', 'Main portfolio');
 
 -- Procedimiento para ejecutar una compra (BUY)
 DELIMITER //
@@ -289,9 +290,9 @@ JOIN users u ON p.user_id = u.user_id;
 
 
 -- Insertar algunas transacciones de ejemplo
-CALL make_deposit(1, 5000.00, 'Depósito inicial');
-CALL make_deposit(2, 3000.00, 'Depósito inicial');
-CALL make_deposit(3, 2000.00, 'Depósito inicial');
+CALL make_deposit(1, 5000.00, 'Deposit');
+CALL make_deposit(2, 3000.00, 'Deposit');
+CALL make_deposit(3, 2000.00, 'Deposit');
 
 -- Realizar algunas operaciones de trading de ejemplo
 CALL execute_buy_trading(1, 1, 'AAPL', 10.0, 150.00);
@@ -310,7 +311,7 @@ SELECT * FROM transactions;
 SELECT * FROM portfolios;
 
 -- Consulta para ver las operaciones de trading
-SELECT * FROM tradings;
+SELECT * FROM tradings;	
 
 -- Consulta para ver los activos en portafolio
 SELECT * FROM portfolio_assets;
