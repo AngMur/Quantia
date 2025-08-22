@@ -288,10 +288,15 @@ app.post("/db/register", async (req, res) => {
       [username, password, email]
     );
 
+    console.log(result);
+
+    
     const [portfolio] = await connection.query(
       'INSERT INTO portfolios (user_id) VALUES (?)',
-      [username]
+      [result.insertId]
     );
+
+    console.log(portfolio);
 
     connection.release();
 

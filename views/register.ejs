@@ -42,58 +42,76 @@
     </main>
 
     <script>
-        async function registerUser() {
-            const username = document.getElementById('reg-username').value;
-            const password = document.getElementById('reg-password').value;
-            const email = document.getElementById('reg-email').value;
-            
-            // const responseElement = document.getElementById('register-response');
-            // responseElement.textContent = "Enviando solicitud...";
-            
-            try {
-                const response = await fetch('/db/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, password, email })
-                });
+   async function registerUser() {
+    const username = document.getElementById('reg-username').value;
+    const password = document.getElementById('reg-password').value;
+    const email = document.getElementById('reg-email').value;
+    
+    // Validación básica de campos
+    if (!username || !password || !email) {
+        alert("Por favor, complete todos los campos.");
+        return;
+    }
+    
+    try {
+        console.log("Enviando solicitud de registro...");
+        
+        const response = await fetch('/db/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password, email })
+        });
 
-                // Verifica si la respuesta es JSON
-                const contentType = response.headers.get('content-type');
-                if (!contentType || !contentType.includes('application/json')) {
-                const text = await response.text();
-                throw new Error(`Respuesta inesperada: ${text.substring(0, 100)}...`);
-                }
-
-                const data = await response.json();
-                console.log(data);
-
-                if (!response.ok) {
-                alert(data.message);
-                throw new Error(data.error || 'Error desconocido');
-                }
-                
-                
-                // responseElement.innerHTML = `<strong>Éxito:</strong> ${JSON.stringify(data, null, 2)}`;
-                // responseElement.style.color = 'green';
-                
-                // Limpiar formulario
-                document.getElementById('reg-username').value = '';
-                document.getElementById('reg-password').value = '';
-                document.getElementById('reg-email').value = '';
-                
-                // alert("Registro exitoso");
-                window.location.href = `/quiz?id=${data.userId}`;
-                
-
-            } catch (error) {
-                // responseElement.textContent = `Error: ${error.message}`;
-                // responseElement.style.color = 'red';
-                console.error('Error en registro:', error);
-                // alert("Usuario o correo ocupados intenta con otros diferentes.");
-            }
+        // Verificar el tipo de contenido de la respuesta
+        const contentType = response.headers.get('content-type');
+        let data;
+        
+        if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+        } else {
+            const text = await response.text();
+            throw new Error(`Respuesta inesperada del servidor: ${text.substring(0, 100)}`);
         }
+
+        console.log("Respuesta recibida:", data);
+
+        if (!response.ok) {
+            // Mostrar mensaje de error del servidor si existe
+            const errorMessage = data.message || data.error || 'Error desconocido en el registro';
+            alert(`Error: ${errorMessage}`);
+            throw new Error(errorMessage);
+        }
+        
+        // Verificar que tenemos un userId antes de redirigir
+        if (!data.userId) {
+            throw new Error("El servidor no devolvió un ID de usuario válido");
+        }
+        
+        // Limpiar formulario
+        document.getElementById('reg-username').value = '';
+        document.getElementById('reg-password').value = '';
+        document.getElementById('reg-email').value = '';
+        
+        console.log("Registro exitoso. Redirigiendo al quiz con ID:", data.userId);
+        
+        // Redirigir al quiz con el ID del usuario
+        window.location.href = `/quiz?id=${data.userId}`;
+
+    } catch (error) {
+        console.error('Error en registro:', error);
+        
+        // Mostrar mensaje de error apropiado
+        if (error.message.includes('Respuesta inesperada')) {
+            alert("Error de comunicación con el servidor. Por favor, intente nuevamente.");
+        } else if (error.message.includes('ID de usuario')) {
+            alert("Error en el registro. Por favor, contacte al administrador.");
+        } else {
+            alert("Error en el registro: " + error.message);
+        }
+    }
+}
         
     </script>
 </body>
